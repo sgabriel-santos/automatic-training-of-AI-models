@@ -1,0 +1,39 @@
+{% extends "index.html" %}
+
+{% block title %}Código Fonte{% endblock %}
+
+{% block content %}
+<div class="mb-3 col-5" style="margin: auto;">
+  <label for="formFile" class="form-label">Fazer upload do arquivo para teste do Modelo</label>
+  <input class="form-control" type="file" id="formFile">
+  <button id="test-model" class="btn btn-primary" style="margin-top: 2vh;" disabled>Testar modelo</button>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const fileInput = document.getElementById('formFile');
+    const testButton = document.getElementById('test-model');
+
+    fileInput.addEventListener('change', () => testButton.disabled = !fileInput.files.length);
+    testButton.addEventListener('click', function() {
+      const file = fileInput.files[0];
+      if (file) {
+        const formData = new FormData();
+        formData.append('image', file);
+
+        fetch('/predict', {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          alert(`Prediction: ${data.predicted_class}`);
+        })
+        .catch((error) => {
+          console.error('Error:', error);
+        });
+      }
+    });
+  });
+</script>
+{% endblock %}

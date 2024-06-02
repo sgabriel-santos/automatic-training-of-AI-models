@@ -1,0 +1,32 @@
+{% extends "index.html" %}
+
+{% block title %}Código Fonte{% endblock %}
+
+{% block content %}
+<h4 class="title-page">Código Fonte</h4>
+<div id="code-block">
+  <button id="copy-button"><i class="bi bi-clipboard"></i>Copy</button>
+  <pre><code id="python-code" class="language-python">{{ function_code }}</code></pre>
+</div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+
+<script>hljs.highlightAll();</script>
+<script>
+  // Realce de sintaxe para código Python
+  hljs.highlightBlock(document.getElementById('python-code'));
+
+  // Lógica de cópia de código
+  document.getElementById('copy-button').addEventListener('click', function() {
+      var codeElement = document.getElementById('python-code');
+      var range = document.createRange();
+      range.selectNode(codeElement);
+      window.getSelection().removeAllRanges();
+      window.getSelection().addRange(range);
+      document.execCommand('copy');
+      window.getSelection().removeAllRanges();
+  });
+</script>
+{% endblock %}

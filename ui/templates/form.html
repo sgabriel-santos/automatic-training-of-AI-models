@@ -1,0 +1,66 @@
+{% extends "index.html" %}
+
+{% block title %}Configurações para treinamento do modelo{% endblock %}
+
+{% block content %}
+<script src="{{ url_for('static', path='/scripts/form.js') }}"></script>
+<h4 class="title-page">Configurações para treinamento do modelo</h4>
+<div class="form">
+  <form id="form" class="row g-3 align-items-center" onsubmit="submitForm(event)">
+    <div class="col-12">
+      <label for="inputState" class="form-label">Modelo para treinamento</label>
+      <select id="inputState" class="form-select" name="model_name">
+        <option value="image_classification" selected>Image Classification (Sequencial Model Keras)</option>
+      </select>
+    </div>
+    <div class="col-md-6">
+      <label for="inputPassword4" class="form-label">Diretório de treinamento (no servidor)</label>
+      <input type="text" class="form-control" id="input-train-dir">
+    </div>
+    <div class="col-md-6">
+      <label for="inputEmail4" class="form-label">Diretório de teste (no servidor)</label>
+      <input type="text" class="form-control" id="inp-test-dir">
+    </div>
+    <div class="col-3">
+      <label for="inp-epochs" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Épocas</label>
+      <input type="number" min="1" name="epochs" class="form-control" id="inp-epochs" placeholder="5" required>
+    </div>
+    <div class="col-3">
+      <label for="inp-seed" class="form-label" title="Define uma semente para a geração aleatória. Isso é útil para garantir que os dados sejam embaralhados da mesma maneira toda vez que o código for executado, permitindo reprodutibilidade.">Seed</label>
+      <input type="number" min="1" name="seed" class="form-control" id="inp-seed" placeholder="10" required>
+    </div>
+    <div class="col-3">
+      <label for="inp-batch-size" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Batch Size</label>
+      <input type="number" min="1" name="batch_size" class="form-control" id="inp-batch-size" placeholder="10" required>
+    </div>
+    <div class="col-3">
+      <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="inp-shuffle" name="shuffle" checked>
+        <label class="form-check-label" for="inp-shuffle" title="Indica que as imagens devem ser embaralhadas a cada época. Isso ajuda a evitar que o modelo aprenda a sequência das imagens ao invés dos padrões nas próprias imagens.">
+          Aplicar Shuffle
+        </label>
+      </div>
+    </div>
+    <div>
+      <label class="form-check-label" for="inp-shuffle" title="">
+        Importar Arquivos de treinamento
+      </label>
+      <input type="file" id="fileInput" accept=".zip" name="file_training">
+    </div>
+    <div>
+      <label class="form-check-label" for="inp-shuffle" title="">
+        Importar Arquivos de validação
+      </label>
+      <input type="file" id="fileInput" accept=".zip" name="file_validation">
+    </div>
+    <div class="col-12">
+      <button id="btn-fit-model" type="submit" class="btn btn-primary" disabled>Treinar Modelo</button>
+    </div>
+  </form>
+  <div id="loader-model-train" class="display-none">
+    <div class="spinner-border" role="status"></div>
+    <span class="sr-only">O modelo está sendo treinado...</span>
+    <a href="/logs_screen">Verificar Logs</a>
+  </div>
+</div>
+{% endblock %}
