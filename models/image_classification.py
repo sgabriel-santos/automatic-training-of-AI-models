@@ -4,7 +4,8 @@ from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.models import load_model
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, confusion_matrix
+import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
 import numpy as np
@@ -12,6 +13,7 @@ import os
 from fastapi import UploadFile
 import shutil
 import zipfile
+import itertools
 
 def exists_directory(directory: str):
     if not os.path.isdir(directory):
@@ -29,6 +31,7 @@ class ImageClassification():
     TRAINING_DIR = '/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
     TEST_DIR = '/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/test'
     classes = ['glioma', 'meningioma', 'pituitary tumor']
+    directory_to_save_image = "ui/statics/images/"
 
     def __init__(self):
         pass
@@ -207,6 +210,10 @@ class ImageClassification():
         y_pred = np.argmax(Y_pred, axis=1)
         target_names = classes
 
+        self.plot_training_validation_loss_and_accuracy(history)
+        cm = confusion_matrix(test_generator.classes, y_pred)
+        self.plot_confusion_matrix(cm, target_names, normalize=False, title='Confusion Matrix')
+
         #Classification Report
         print('Classification Report')
         print(classification_report(test_generator.classes, y_pred, target_names=target_names))
@@ -231,3 +238,54 @@ class ImageClassification():
         predicted_class = np.argmax(predictions[0])
 
         return {"predicted_class": self.classes[int(predicted_class)]}
+    
+    def plot_training_validation_loss_and_accuracy(self, history):
+        history_dict = history.history
+        loss_values = history_dict['loss']
+        val_loss_values = history_dict['val_loss']
+
+        epochs_x = range(1, len(loss_values) + 1)
+        plt.figure(figsize=(10,10))
+        plt.subplot(2,1,1)
+        plt.plot(epochs_x, loss_values, 'bo', label='Training loss')
+        plt.plot(epochs_x, val_loss_values, 'b', label='Validation loss')
+        plt.title('Training and validation Loss and Accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Loss')
+        plt.legend()
+        plt.subplot(2,1,2)
+        acc_values = history_dict['accuracy']
+        val_acc_values = history_dict['val_accuracy']
+        plt.plot(epochs_x, acc_values, 'bo', label='Training acc')
+        plt.plot(epochs_x, val_acc_values, 'b', label='Validation acc')
+        #plt.title('Training and validation accuracy')
+        plt.xlabel('Epochs')
+        plt.ylabel('Acc')
+        plt.legend()
+        plt.savefig(f'{self.directory_to_save_image}Training and validation Loss and Accuracy.png')
+
+    def plot_confusion_matrix(self, cm, classes, normalize=True, title='Confusion matrix', cmap=plt.cm.Blues):
+        """
+        This function prints and plots the confusion matrix.
+        Normalization can be applied by setting `normalize=True`.
+        """
+        plt.figure(figsize=(10,10))
+        plt.imshow(cm, interpolation='nearest', cmap=cmap)
+        plt.title(title)
+        plt.colorbar()
+        tick_marks = np.arange(len(classes))
+        plt.xticks(tick_marks, classes, rotation=45)
+        plt.yticks(tick_marks, classes)
+        if normalize:
+            cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+            cm = np.around(cm, decimals=2)
+            cm[np.isnan(cm)] = 0.0
+        thresh = cm.max() / 2.
+        for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+            plt.text(j, i, cm[i, j],
+                    horizontalalignment="center",
+                    color="white" if cm[i, j] > thresh else "black")
+        plt.tight_layout()
+        plt.ylabel('True label')
+        plt.xlabel('Predicted label')
+        plt.savefig(f'{self.directory_to_save_image}confusion_matrix.png')

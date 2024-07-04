@@ -3,6 +3,13 @@
 {% block title %}Código Fonte{% endblock %}
 
 {% block content %}
+<div class="result-model">
+  <h3>Resultado do Modelo Treinado</h3>
+  <div class="graphs">
+    <img src="{{ url_for('static', path='images/confusion_matrix.png') }}" alt="Confusion Matrix", style="width: 35%; height: auto;">
+    <img src="{{ url_for('static', path='images/Training and validation Loss and Accuracy.png') }}" alt="Confusion Matrix", style="width: 40%; height: auto;">
+  </div>
+</div>
 <div class="mb-3 col-5" style="margin: auto;">
   <label for="formFile" class="form-label">Fazer upload do arquivo para teste do Modelo</label>
   <input class="form-control" type="file" id="formFile">
