@@ -196,27 +196,32 @@ class ImageClassification():
         model = load_model(self.MODEL_NAME_RESULT)
 
         # Using the validation dataset
-        score = model.evaluate(validation_generator)
-        print('Val loss:', score[0])
-        print('Val accuracy:', score[1])
+        validation_score = model.evaluate(validation_generator)
+        val_loss, val_accuracy = validation_score[0], validation_score[1]
+        print('Val loss:', val_loss)
+        print('Val accuracy:', val_accuracy)
 
         # Using the test dataset
-        score = model.evaluate(test_generator)
-        print('Test loss:', score[0])
-        print('Test accuracy:', score[1])
+        test_score_score = model.evaluate(test_generator)
+        test_loss, test_accuracy = test_score_score[0], test_score_score[1]
+        print('Test loss:', test_loss)
+        print('Test accuracy:', test_accuracy)
 
         #On test dataset
         Y_pred = model.predict(test_generator)
         y_pred = np.argmax(Y_pred, axis=1)
         target_names = classes
 
-        self.plot_training_validation_loss_and_accuracy(history)
-        cm = confusion_matrix(test_generator.classes, y_pred)
-        self.plot_confusion_matrix(cm, target_names, normalize=False, title='Confusion Matrix')
-
         #Classification Report
         print('Classification Report')
         print(classification_report(test_generator.classes, y_pred, target_names=target_names))
+        
+        print('Saving model metrics')
+        self.save_metrics(val_loss, val_accuracy, test_loss, test_accuracy)
+        self.save_training_validation_loss_and_accuracy(history)
+        cm = confusion_matrix(test_generator.classes, y_pred)
+        self.save_confusion_matrix(cm, target_names, normalize=False, title='Confusion Matrix')
+        print('Model training completed successfully')
 
     def load_and_process_image(self, img):
         img = Image.open(img)
@@ -238,8 +243,12 @@ class ImageClassification():
         predicted_class = np.argmax(predictions[0])
 
         return {"predicted_class": self.classes[int(predicted_class)]}
+
+    def save_metrics(self, val_loss, val_accuracy, test_loss, test_accuracy):
+        with open('models/results/metrics.txt', 'w') as file:
+            file.write(f'{val_loss:.3f} {val_accuracy:.3f} {test_loss:.3f} {test_accuracy:.3f}')
     
-    def plot_training_validation_loss_and_accuracy(self, history):
+    def save_training_validation_loss_and_accuracy(self, history):
         history_dict = history.history
         loss_values = history_dict['loss']
         val_loss_values = history_dict['val_loss']
@@ -264,7 +273,7 @@ class ImageClassification():
         plt.legend()
         plt.savefig(f'{self.directory_to_save_image}Training and validation Loss and Accuracy.png')
 
-    def plot_confusion_matrix(self, cm, classes, normalize=True, title='Confusion matrix', cmap=plt.cm.Blues):
+    def save_confusion_matrix(self, cm, classes, normalize=True, title='Confusion matrix', cmap=plt.cm.Blues):
         """
         This function prints and plots the confusion matrix.
         Normalization can be applied by setting `normalize=True`.

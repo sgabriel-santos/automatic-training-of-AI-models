@@ -23,4 +23,15 @@ async def source_code_screen(request: Request):
 
 @router.get('/test_model')
 async def test_model_screen(request: Request):
-    return templates.TemplateResponse("test_model.html", {"request": request})
+    with open('models/results/metrics.txt', 'r') as file:
+        vl, va, tl, ta = file.readline().split(' ')
+    
+    return templates.TemplateResponse(
+        "test_model.html", 
+        {
+            "request": request, 
+            "validation_loss": vl, 
+            "validation_accuracy": va, 
+            "test_loss": tl, 
+            "test_accuracy": ta
+        })

@@ -5,6 +5,13 @@
 {% block content %}
 <div class="result-model">
   <h3>Resultado do Modelo Treinado</h3>
+  <div class="loss-accuracy">
+    <span><b>Validation Loss:</b> {{validation_loss}} |</span>
+    <span><b>Validation Accuracy:</b> {{validation_accuracy}}</span>
+    <br/>
+    <span><b>Test Loss:</b> 0.168 |</span>
+    <span><b>Test Accuracy:</b> 0.168</span>
+  </div>
   <div class="graphs">
     <img src="{{ url_for('static', path='images/confusion_matrix.png') }}" alt="Confusion Matrix", style="width: 35%; height: auto;">
     <img src="{{ url_for('static', path='images/Training and validation Loss and Accuracy.png') }}" alt="Confusion Matrix", style="width: 40%; height: auto;">
