@@ -4,8 +4,8 @@ from fastapi.templating import Jinja2Templates
 from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
 from models.manager_model import Managermodel
-from middleware import utils_log
-from routes import log_routes, screen_routes, utils_routes
+from middleware import utils_log, utils_llm
+from routes import log_routes, screen_routes, utils_routes, llm_routes
 import sys
 import os
 
@@ -13,6 +13,7 @@ app = FastAPI()
 app.include_router(log_routes.router)
 app.include_router(screen_routes.router)
 app.include_router(utils_routes.router)
+app.include_router(llm_routes.router)
 
 # UI Configuration
 templates = Jinja2Templates(directory="ui/templates")
@@ -22,7 +23,7 @@ app.mount("/static", StaticFiles(directory="ui/statics"), name="static")
 @app.post('/fit_model', response_class=HTMLResponse)
 async def fit_model(
     background_tasks: BackgroundTasks,
-    name_model: str = Form(...),
+    model_name: str = Form(...),
     epochs: int = Form(...),
     shuffle: bool = Form(...),
     seed: int = Form(...),
@@ -31,17 +32,17 @@ async def fit_model(
     file_validation: UploadFile = File(...)
 ):
     manager_model = Managermodel()
-    model = manager_model.get_model(name_model)
+    model = manager_model.get_model(model_name)
 
     if not model:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Model with name {name_model} not found"  
+            detail=f"Model with name {model_name} not found"  
         )
 
     try:
         data = {
-            'model_name': name_model,
+            'model_name': model_name,
             'epochs': epochs,
             'shuffle': shuffle,
             'seed': seed,
@@ -55,6 +56,8 @@ async def fit_model(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Error building parameters: {str(e)}"  
         )
+    
+    utils_llm.generate_text_model_to_llm(data)
 
     sys.stdout = utils_log.stdout_buffer
     background_tasks.add_task(model.fit_model, manager_model)

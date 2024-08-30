@@ -3,7 +3,6 @@ async function submitForm(event) {
     const form = document.getElementById('form');
     const formData = new FormData(form);
 
-    formData.append('name_model', 'image_classification');
     formData.set('shuffle', formData.get('shuffle') ? 'true' : 'false');
 
     try {

@@ -1,19 +1,18 @@
-from tensorflow import keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
-from tensorflow.keras.optimizers import Adam
-from tensorflow.keras.models import load_model
+from tf_keras.callbacks import EarlyStopping, ModelCheckpoint
+from tf_keras.preprocessing.image import ImageDataGenerator
+from tf_keras.models import Sequential, load_model
+from tf_keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
+from tf_keras.optimizers import Adam
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 from PIL import Image
-import numpy as np
 import numpy as np
 import os
 from fastapi import UploadFile
 import shutil
 import zipfile
 import itertools
+from middleware.utils_llm import generate_text_model_to_llm
 
 def exists_directory(directory: str):
     if not os.path.isdir(directory):
@@ -83,9 +82,8 @@ class ImageClassification():
             # Certifique-se de que cada subdiretório contém imagens
             for dir_name in dirs:
                 dir_path = os.path.join(root, dir_name)
-                if not any(file.lower().endswith(('.png', '.jpg', '.jpeg', '.gif', '.bmp')) for file in os.listdir(dir_path)):
+                if not any(file.lower().endswith(('.png', '.jpg', '.jpeg')) for file in os.listdir(dir_path)):
                     return False
-
         return True
 
 
@@ -101,6 +99,7 @@ class ImageClassification():
             self.fit()
 
         manager_model.update_training_model(False)
+        generate_text_model_to_llm()
 
     def fit(self):
         if(not exists_directory(self.TRAINING_DIR)): return False
@@ -172,11 +171,11 @@ class ImageClassification():
 
         #Callback to save the best model
         callbacks_list = [
-            keras.callbacks.ModelCheckpoint(
+            ModelCheckpoint(
                 filepath=self.MODEL_NAME_RESULT,
                 monitor='val_loss', save_best_only=True, verbose=1
             ),
-            keras.callbacks.EarlyStopping(monitor='val_loss', patience=10,verbose=1)
+            EarlyStopping(monitor='val_loss', patience=10,verbose=1)
         ]
 
         print('Iniciando treinamento do modelo')
@@ -218,9 +217,9 @@ class ImageClassification():
         
         print('Saving model metrics')
         self.save_metrics(val_loss, val_accuracy, test_loss, test_accuracy)
-        self.save_training_validation_loss_and_accuracy(history)
+        self.save_training_validation_loss_and_accuracy_graph(history)
         cm = confusion_matrix(test_generator.classes, y_pred)
-        self.save_confusion_matrix(cm, target_names, normalize=False, title='Confusion Matrix')
+        self.save_confusion_matrix_graph(cm, target_names, normalize=False, title='Confusion Matrix')
         print('Model training completed successfully')
 
     def load_and_process_image(self, img):
@@ -235,8 +234,6 @@ class ImageClassification():
         return img_array
     
     def predict(self, image):
-        from tensorflow.keras.models import load_model
-        import numpy as np
         model = load_model(self.MODEL_NAME_RESULT)
         processed_image = self.load_and_process_image(image.file)
         predictions = model.predict(processed_image)
@@ -248,7 +245,7 @@ class ImageClassification():
         with open('models/results/metrics.txt', 'w') as file:
             file.write(f'{val_loss:.3f} {val_accuracy:.3f} {test_loss:.3f} {test_accuracy:.3f}')
     
-    def save_training_validation_loss_and_accuracy(self, history):
+    def save_training_validation_loss_and_accuracy_graph(self, history):
         history_dict = history.history
         loss_values = history_dict['loss']
         val_loss_values = history_dict['val_loss']
@@ -273,7 +270,7 @@ class ImageClassification():
         plt.legend()
         plt.savefig(f'{self.directory_to_save_image}Training and validation Loss and Accuracy.png')
 
-    def save_confusion_matrix(self, cm, classes, normalize=True, title='Confusion matrix', cmap=plt.cm.Blues):
+    def save_confusion_matrix_graph(self, cm, classes, normalize=True, title='Confusion matrix', cmap=plt.cm.Blues):
         """
         This function prints and plots the confusion matrix.
         Normalization can be applied by setting `normalize=True`.

@@ -3,3 +3,4 @@ __pycache__
 training_files
 results
 ui/statics/images/
+llm/*.txt
