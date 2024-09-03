@@ -1,22 +1,49 @@
 from fastapi import HTTPException, status
+from models.manager_model import Managermodel
 from logging import error
 from groq import Groq
-import os.path
+import textwrap
 
 API_KEY_DIRECTORY = 'llm/groq_api_key.txt'
 TEXT_MODEL_TO_LLM_DIRECTORY = 'llm/text_model_to_llm.txt'
 
-def generate_text_model_to_llm(data: dict, state = 1) -> None:
+def build_status_and_result_model(manager_model: Managermodel):
+    status_model = "O modelo está em processo de treinamento"
+    result_model = "O resultado do modelo será exibido somente após o final do treinamento"
+    if not manager_model.is_training_model():
+        status_model = "O treinamento do modelo foi concluído"
+        result_model = "Estamos trabalhando para montar as informações do resultado do modelo"
+    return status_model, result_model
+
+def build_model_configuration_text():
+    manager_model = Managermodel()
+    status_model, result_model = build_status_and_result_model(manager_model)
+    
+    return f"""
+        Status do treinamento: {status_model}
+                    
+        A seguir, segue informações a cerca do treinamento
+        
+        Modelo de treinamento utilizado: {manager_model.model_name}
+        
+        Configurações do Treinamento:
+        * epochs: {manager_model.epochs}
+        * shuffle: {manager_model.shuffle}
+        * seed: {manager_model.seed}
+        * batch_size: {manager_model.batch_size}
+        
+        Resultado:
+        {result_model}
     """
-    Função responsável por gerar o arquivo contendo as informações acerca do treinamento do modelo que será passada para o LLM posteriormente
+
+def generate_text_model_to_llm_in_file(is_training_started = True) -> None:
+    """
+    Função responsável por gerar o arquivo contendo as informações acerca do treinamento do modelo 
+    que será passada para o LLM posteriormente
     
     Parâmetros:
     ----------
-        data (dict): Contêm as informações relevantes sobre o modelo treinado ou em treinamento
-        state (int): Representa o estado atual do treinamento. Pode variar entre 1 e 3.
-            1 - Treinamento não iniciado;  
-            2- Modelo está em treinamento;  
-            3 - Modelo treinado e pronto para uso;
+        is_training_started (bool): Indica se já foi iniciado o treinamento do modelo.
             
     Retorno:
     ----------
@@ -24,38 +51,24 @@ def generate_text_model_to_llm(data: dict, state = 1) -> None:
     """ 
     
     with open(TEXT_MODEL_TO_LLM_DIRECTORY, 'w') as file:
-        # file.write('Treinamento\n')
-        # file.write('A seguir, apresento o treinamento do modelo, onde são definidos valores específicos para os principais parâmetros de treinamento.\n\n')
-        file.write(f"Status do treinamento: O modelo está em processo de treinamento\n\n")
-        file.write(f"A seguir, segue informações a cerca do treinamento\n\n")
-        file.write(f"Modelo de treinamento utilizado: {data['model_name']}\n\n")
-        
-        file.write('Configurações do Treinamento\n')
-        file.write(f"* epochs: {data['epochs']}\n")
-        file.write(f"* shuffle: {data['shuffle']}\n")
-        file.write(f"* seed: {data['seed']}\n")
-        file.write(f"* batch_size: {data['batch_size']}\n\n")
-        
+        text = """
+                Status do treinamento: O usuário ainda não iníciou o treinamento de um modelo
+                
+                As opções de modelos a serem escolhidas pelo usuários são:
+                * XCeption
+                * VGG19
+                * ResNet50
+                * MobileNet
+                * InceptionV3
+                
+                Os parâmetros que o usuário pode configurar são:
+                * Épocas
+                * Seed
+                * Batch Size
+            """ if not is_training_started else build_model_configuration_text()
+        file.write(textwrap.dedent(text))
+    
 def get_text_model_to_llm():
-    file_exists = os.path.isfile(TEXT_MODEL_TO_LLM_DIRECTORY)
-    
-    if not file_exists:
-        return """
-            Status do treinamento: O usuário ainda não iníciou o treinamento de um modelo
-            
-            As opções de modelos a serem escolhidas pelo usuários são:
-            * XCeption
-            * VGG19
-            * ResNet50
-            * MobileNet
-            * InceptionV3
-            
-            Os parâmetros que o usuário pode configurar são:
-            * Épocas
-            * Seed
-            * Batch Size
-        """
-    
     try:
         with open(TEXT_MODEL_TO_LLM_DIRECTORY, 'r') as file:
             return ''.join(file.readlines())

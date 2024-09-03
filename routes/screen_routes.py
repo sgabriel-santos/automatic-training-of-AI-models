@@ -1,10 +1,10 @@
 from fastapi import APIRouter, Request
 from fastapi.templating import Jinja2Templates
-from models.image_classification import ImageClassification
+from models.manager_model import Managermodel
 import inspect
 
 # Model Imported
-image_classification = ImageClassification()
+manager_model = Managermodel()
 
 router = APIRouter(tags=["screens"])
 
@@ -17,7 +17,9 @@ async def home_screen(request: Request):
 
 @router.get('/source_code')
 async def source_code_screen(request: Request):
-    function_code = inspect.getsource(image_classification.fit)
+    function_code = "Necessário iniciar o treinamento com um dos modelos para visualizar o seu código"
+    if manager_model.model_used:
+        function_code = inspect.getsource(manager_model.model_used.fit_model)
     return templates.TemplateResponse("source_code.html", {"request": request, "function_code": function_code})
 
 

@@ -4,6 +4,7 @@ from tf_keras.models import Sequential, load_model
 from tf_keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from tf_keras.optimizers import Adam
 from sklearn.metrics import classification_report, confusion_matrix
+from models.abstract_model_class import ImageClassification
 import matplotlib.pyplot as plt
 from PIL import Image
 import numpy as np
@@ -12,7 +13,6 @@ from fastapi import UploadFile
 import shutil
 import zipfile
 import itertools
-from middleware.utils_llm import generate_text_model_to_llm
 
 def exists_directory(directory: str):
     if not os.path.isdir(directory):
@@ -20,7 +20,7 @@ def exists_directory(directory: str):
         return False
     return True
 
-class ImageClassification():
+class SequentialKeras(ImageClassification):
     epochs = 1
     shuffle = True
     seed = 10
@@ -35,12 +35,11 @@ class ImageClassification():
     def __init__(self):
         pass
 
-    def get_parameters(self, data: dict):
+    def set_parameters_to_training_model(self, data: dict):
         self.epochs = data['epochs']
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
-        print(data['file_training'].filename)
         if(data['file_training'].filename): self.save_files(data['file_training'], 'train')
         if(data['file_validation'].filename): self.save_files(data['file_validation'], 'test')
 
@@ -86,22 +85,7 @@ class ImageClassification():
                     return False
         return True
 
-
-    def fit_model(self, manager_model: dict, with_try_except: bool = True):
-        manager_model.update_training_model(True)
-        if with_try_except:
-            try:
-                self.fit()
-            except Exception as e:
-                print('\nexcess generated during model training')
-                print(f'mensage: {e}')
-        else:
-            self.fit()
-
-        manager_model.update_training_model(False)
-        generate_text_model_to_llm()
-
-    def fit(self):
+    def fit_model(self) -> None:
         if(not exists_directory(self.TRAINING_DIR)): return False
         if(not exists_directory(self.TEST_DIR)): return False
 
