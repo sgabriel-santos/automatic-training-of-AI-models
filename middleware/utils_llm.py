@@ -3,9 +3,10 @@ from models.manager_model import Managermodel
 from logging import error
 from groq import Groq
 import textwrap
+import os
 
-API_KEY_DIRECTORY = 'llm/groq_api_key.txt'
-TEXT_MODEL_TO_LLM_DIRECTORY = 'llm/text_model_to_llm.txt'
+API_KEY_DIRECTORY = 'llm/utils/groq_api_key.txt'
+TEXT_MODEL_TO_LLM_DIRECTORY = 'llm/utils/text_model_to_llm.txt'
 
 def build_status_and_result_model(manager_model: Managermodel):
     status_model = "O modelo está em processo de treinamento"
@@ -49,6 +50,8 @@ def generate_text_model_to_llm_in_file(is_training_started = True) -> None:
     ----------
         A Função Não possui retorno
     """ 
+    
+    os.makedirs(os.path.dirname(TEXT_MODEL_TO_LLM_DIRECTORY), exist_ok=True)
     
     with open(TEXT_MODEL_TO_LLM_DIRECTORY, 'w') as file:
         text = """

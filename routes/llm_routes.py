@@ -8,6 +8,6 @@ router = APIRouter(tags=["llm"])
 async def send_message(text: str):
     return send_answer(text)
 
-@router.post('/register_groq_api_key')
+@router.post('/register_groq_api_key', status_code=204)
 async def register_groq_api_key(api_key: str):
     register_groq_api_key_in_file(api_key)
