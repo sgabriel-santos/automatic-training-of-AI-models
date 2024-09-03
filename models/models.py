@@ -1,4 +1,4 @@
-from models.image_classification import SequentialKeras
+from models.sequential_keras import SequentialKeras
 
 name_to_model = {
     'image_classification': SequentialKeras,
