@@ -20,9 +20,16 @@ async def fit_model(
     file_validation: UploadFile = File(...)
 ):
     manager_model = Managermodel()
-    manager_model.set_model_to_be_used(model_name)
+    
+    if manager_model.is_training_model():
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail=f"Há um modelo em processo de treinamento"  
+        )
+    
+    found_model = manager_model.set_model_to_be_used(model_name)
 
-    if not manager_model.model_used:
+    if not found_model:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail=f"Model with name {model_name} not found"  
