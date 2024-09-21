@@ -19,8 +19,8 @@ class Managermodel:
     _instance = None
     training_model = False
     
-    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/trainaaa'
-    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/testaaaa'
+    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
+    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/test'
     MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
     
     epochs = 1
