@@ -3,8 +3,8 @@ from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
 from models.manager_model import Managermodel
 from middleware import utils_log, utils_llm
-import sys
 import os
+import sys
 
 router = APIRouter(tags=["training_model"])
 

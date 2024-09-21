@@ -1,8 +1,8 @@
 from models.models import name_to_model
 from models.abstract_model_class import ImageClassification
-from models.available_models.training_info_model import TrainingInfo
 from tf_keras.models import load_model
 from fastapi import UploadFile
+from middleware.utils_os import exists_directory
 import shutil
 import zipfile
 import os
@@ -17,11 +17,10 @@ class Managermodel:
     """
     
     _instance = None
-    model_name = None
     training_model = False
     
-    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
-    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/test'
+    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/trainaaa'
+    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/testaaaa'
     MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
     
     epochs = 1
@@ -68,6 +67,7 @@ class Managermodel:
             - None
         """
         
+        self.model_used.set_parameters_to_training_model(data)
         self.model_name = data['model_name']
         self.epochs = data['epochs']
         self.shuffle = data['shuffle']
@@ -94,7 +94,22 @@ class Managermodel:
     def fit_model(self, generate_text_model_to_llm_in_file):
         self.__update_training_model(True)
         generate_text_model_to_llm_in_file()
-        history = self.model_used.fit_model(self.__build_training_info())
+        try:
+            print('Iniciando fluxo de treinamento do modelo')
+            if not exists_directory(self.TRAINING_DIR):
+                print('Error: Diretório de treinamento não encontrado')
+                return False
+            
+            if(not exists_directory(self.TEST_DIR)):
+                print('Error: Diretório de test não encontrado')
+                return False
+            
+            history = self.model_used.fit_model()
+        except:
+            self.__update_training_model(False)
+            print('Parando fluxo de treinamento do modelo.')
+            raise    
+        
         print('Modelo Treinado com suceso')
         self.model_used.test_model(history)
         self.__update_training_model(False)
@@ -113,12 +128,12 @@ class Managermodel:
         predictions = model.predict(processed_image)
         predicted_class = np.argmax(predictions[0])
         
-        classes = self.__get_classes()
+        classes = self.get_classes()
 
         return {"predicted_class": classes[int(predicted_class)]}
     
 
-    def __get_classes(self) -> list[str]:
+    def get_classes(self) -> list[str]:
         with open('models/results/classes.txt', 'r') as file:
             line = file.readline().replace("'", '"')
             return json.loads(line)
@@ -148,19 +163,6 @@ class Managermodel:
         img_array = img_array / 255.0  # Normalização
         img_array = np.expand_dims(img_array, axis=0)  # Adicionar dimensão do batch
         return img_array
-    
-    
-    def __build_training_info(self):
-        return TrainingInfo(
-            MODEL_NAME_RESULT=self.MODEL_NAME_RESULT,
-            TRAINING_DIR=self.TRAINING_DIR,
-            TEST_DIR=self.TEST_DIR,
-            epochs=self.epochs,
-            shuffle=self.shuffle,
-            seed=self.seed,
-            batch_size=self.batch_size,
-            im_shape=self.im_shape
-        )
     
     
     def __save_files(self, file: UploadFile, prefix_path: str):
