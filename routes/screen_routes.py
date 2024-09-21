@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.templating import Jinja2Templates
 from models.manager_model import Managermodel
+from models.save_files_class import SaveFiles
 import inspect
 
 # Model Imported
@@ -25,9 +26,20 @@ async def source_code_screen(request: Request):
 
 @router.get('/test_model')
 async def test_model_screen(request: Request):
-    with open('models/results/metrics.txt', 'r') as file:
-        vl, va, tl, ta = file.readline().split(' ')
-    
+    try:
+        metrics = SaveFiles().get_metrics()
+        if not metrics:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Não foi possível localizar as informações de métricas do modelo treinado"
+            )
+        vl, va, tl, ta = metrics
+    except:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Erro ao coletar informações das métricas"
+        )
+        
     return templates.TemplateResponse(
         "test_model.html", 
         {
