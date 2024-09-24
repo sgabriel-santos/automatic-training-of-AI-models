@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 import numpy as np
 from sklearn.metrics import classification_report
-from tf_keras.models import load_model
+from tf_keras.callbacks import History
+from tf_keras.models import load_model, Model
 from tf_keras.preprocessing.image import ImageDataGenerator
 from models.save_files_class import SaveFiles
+import os
 
 class ImageClassification(ABC, SaveFiles):
     TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
@@ -50,7 +52,7 @@ class ImageClassification(ABC, SaveFiles):
         if self.validation_generator: return self.validation_generator
         val_data_generator = ImageDataGenerator(rescale=1./250, validation_split=0.2)
         validation_generator = val_data_generator.flow_from_directory(
-            self.TRAINING_DIR, 
+            self.TEST_DIR, 
             target_size=self.im_shape, 
             shuffle=False, 
             seed=self.seed,
@@ -75,8 +77,16 @@ class ImageClassification(ABC, SaveFiles):
         )
         self.test_generator = test_generator
         return test_generator
-            
-    def test_model(self, history):
+    
+    def get_classes(self):
+        train_generator = self.get_or_build_train_generator()
+        classes = list(train_generator.class_indices.keys())
+        print(f'Classes: {str(classes)}')
+        self.classes = classes
+        self.save_classes(classes)
+        return classes
+                
+    def test_model(self, history: History):
         print('Iniciando carregamento do modelo para validações')
         model = load_model(self.MODEL_NAME_RESULT)
 
@@ -106,9 +116,33 @@ class ImageClassification(ABC, SaveFiles):
         self.save_training_validation_loss_and_accuracy_graph(history)
         self.save_confusion_matrix_graph(test_generator, y_pred, target_names, normalize=False)
         print('Model training completed successfully')
+        
+    def fit_and_save_model(self, model: Model) -> History:
+        print('Iniciando treinamento do modelo')
+        
+        train_generator = self.get_or_build_train_generator()
+        validation_generator = self.get_or_build_validation_generator()
+        nb_train_samples = train_generator.samples
+        nb_validation_samples = validation_generator.samples
+        
+        #Training        
+        history = model.fit(
+            self.train_generator,
+            steps_per_epoch=nb_train_samples // self.batch_size,
+            epochs=self.epochs,
+            validation_data=validation_generator,
+            verbose = 1,
+            validation_steps=nb_validation_samples // self.batch_size
+        )
+        
+        print('Salvando Modelo')
+        os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
+        model.save(self.MODEL_NAME_RESULT)
+        return history
+        
             
     @abstractmethod
-    def fit_model(self) -> None:
+    def fit_model(self) -> History:
         """
         Responsável por realizar o treinamento do modelo
         """

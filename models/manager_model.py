@@ -105,12 +105,14 @@ class Managermodel:
                 return False
             
             history = self.model_used.fit_model()
-        except:
+            
+        except Exception as e:
             self.__update_training_model(False)
             print('Parando fluxo de treinamento do modelo.')
+            print(f'Detalhe da excessão: {e}')
             raise    
         
-        print('Modelo Treinado com suceso')
+        print('Modelo Treinado com sucesso')
         self.model_used.test_model(history)
         self.__update_training_model(False)
         generate_text_model_to_llm_in_file()

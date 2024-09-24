@@ -6,19 +6,25 @@ import numpy as np
 import itertools
 
 class SaveFiles():
-    _instance = None
     directory_to_save_image = 'ui/statics/images/'
     directory_to_save_classes = 'models/results/classes.txt'
     directory_to_save_metrics = 'models/results/metrics.txt'
+    MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
     
-    def __new__(cls, *args, **kwargs):
-        if cls._instance is None:
-            cls._instance = super().__new__(cls, *args, **kwargs)
-        return cls._instance
+    def __init__(self): pass
+    
+    def save_model(self, model):
+        try:    
+            print('Salvando Modelo')
+            os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
+            model.save(self.MODEL_NAME_RESULT)
+        except Exception as e:
+            print(f'Erro inesperado: {e}')
+            raise Exception('Erro inesperado ao salvar modelo')
     
     def save_classes(self, classes: list[str]) -> None:
         try:
-            print('Salvando clases')
+            print('Salvando clases coletadas')
             os.makedirs(os.path.dirname(self.directory_to_save_classes), exist_ok=True)
             with open(self.directory_to_save_classes, 'w') as file:
                 file.write(f'{classes}')
