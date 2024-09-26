@@ -1,10 +1,10 @@
 from tf_keras.models import Sequential
 from tf_keras.layers import Dense, Dropout, Flatten, Conv2D, MaxPooling2D
 from tf_keras.optimizers import Adam
-from tf_keras.callbacks import History
 from models.abstract_model_class import ImageClassification
+from tf_keras.callbacks import History
 
-class SequentialKeras(ImageClassification):
+class SequentialKerasModel(ImageClassification):
     
     def __init__(self):
         pass

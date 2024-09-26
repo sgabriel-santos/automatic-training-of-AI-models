@@ -98,10 +98,12 @@ class Managermodel:
             print('Iniciando fluxo de treinamento do modelo')
             if not exists_directory(self.TRAINING_DIR):
                 print('Error: Diretório de treinamento não encontrado')
+                self.__update_training_model(False)
                 return False
             
             if(not exists_directory(self.TEST_DIR)):
                 print('Error: Diretório de test não encontrado')
+                self.__update_training_model(False)
                 return False
             
             history = self.model_used.fit_model()

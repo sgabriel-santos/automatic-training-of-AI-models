@@ -5,7 +5,7 @@ from tf_keras.models import Model
 from tf_keras.optimizers import RMSprop
 from models.abstract_model_class import ImageClassification
 
-class XCeption(ImageClassification):
+class XCeptionModel(ImageClassification):
     
     def __init__(self): pass
 

@@ -138,6 +138,7 @@ class ImageClassification(ABC, SaveFiles):
         print('Salvando Modelo')
         os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
         model.save(self.MODEL_NAME_RESULT)
+        print('Modelo Salvo com sucesso')
         return history
         
             
