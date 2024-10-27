@@ -21,12 +21,39 @@
   <label for="formFile" class="form-label">Fazer upload do arquivo para teste do Modelo</label>
   <input class="form-control" type="file" id="formFile">
   <button id="test-model" class="btn btn-primary" style="margin-top: 2vh;" disabled>Testar modelo</button>
+  <button id="download-model" class="btn btn-primary" style="margin-top: 2vh;">Fazer Download do Modelo</button>
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     const fileInput = document.getElementById('formFile');
     const testButton = document.getElementById('test-model');
+    const downloadModelButton = document.getElementById('download-model')
+
+    downloadModelButton.addEventListener('click', function() {
+      fetch('/download_model', {
+          method: 'GET'
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.blob(); // Converter a resposta para um blob
+      })
+      .then(blob => {
+          const url = window.URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = 'model.keras'; // Nome do arquivo para download
+          document.body.appendChild(a); // Adicionar o link ao corpo do documento
+          a.click(); // Simular o clique no link
+          a.remove(); // Remover o link após o clique
+          alert(`Download do modelo inciado com sucesso!!`);
+      })
+      .catch(error => {
+          console.error('Houve um erro no download do arquivo:', error);
+      });
+    });
 
     fileInput.addEventListener('change', () => testButton.disabled = !fileInput.files.length);
     testButton.addEventListener('click', function() {
