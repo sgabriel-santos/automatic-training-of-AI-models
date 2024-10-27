@@ -16,6 +16,9 @@ async def fit_model(
     shuffle: bool = Form(...),
     seed: int = Form(...),
     batch_size: int = Form(...),
+    is_absolute_path: bool = Form(...),
+    train_dataset_path: str = Form(...),
+    valid_dataset_path: str = Form(...),
     file_training: UploadFile = File(...),
     file_validation: UploadFile = File(...)
 ):
@@ -42,8 +45,11 @@ async def fit_model(
             'shuffle': shuffle,
             'seed': seed,
             'batch_size': batch_size,
+            'is_absolute_path': is_absolute_path,
             'file_training': file_training,
-            'file_validation': file_validation
+            'file_validation': file_validation,
+            'train_dataset_path': train_dataset_path,
+            'valid_dataset_path': valid_dataset_path
         }
         manager_model.set_parameters_to_training_model(data)
     

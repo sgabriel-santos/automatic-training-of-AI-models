@@ -19,15 +19,17 @@ class Managermodel:
     _instance = None
     training_model = False
     
-    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
-    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/test'
+    TRAINING_DIR=None
+    TEST_DIR=None
     MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
     
-    epochs = 1
-    shuffle = True
-    seed = 10
-    batch_size = 10
+    epochs = None
+    shuffle = None
+    seed = None
+    batch_size = None
     im_shape = (250,250)
+    
+    is_absolute_path: bool = None
     
     model_used: ImageClassification | None = None
     
@@ -75,8 +77,16 @@ class Managermodel:
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
-        if(data['file_training'].filename): self.__save_files(data['file_training'], 'train')
-        if(data['file_validation'].filename): self.__save_files(data['file_validation'], 'test')
+        self.TRAINING_DIR = 'training_files/train'
+        self.TEST_DIR = 'training_files/test'
+        self.is_absolute_path = data['is_absolute_path']
+        
+        if not self.is_absolute_path:
+            if(data['file_training'].filename): self.__save_files(data['file_training'], 'train')
+            if(data['file_validation'].filename): self.__save_files(data['file_validation'], 'test')
+        else:
+            self.TRAINING_DIR = data['train_dataset_path']
+            self.TEST_DIR = data['valid_dataset_path']
     
     
     def is_training_model(self) -> bool:

@@ -18,14 +18,6 @@
         <option value="InceptionV3">InceptionV3</option>
       </select>
     </div>
-    <div class="col-md-6">
-      <label for="inp-train-directory" class="form-label">Diretório de treinamento (no servidor)</label>
-      <input type="text" class="form-control" id="input-train-dir">
-    </div>
-    <div class="col-md-6">
-      <label for="inp-test-directory" class="form-label">Diretório de teste (no servidor)</label>
-      <input type="text" class="form-control" id="inp-test-dir">
-    </div>
     <div class="col-3">
       <label for="inp-epochs" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Épocas</label>
       <input type="number" min="1" name="epochs" class="form-control" id="inp-epochs" placeholder="5" required>
@@ -46,18 +38,28 @@
         </label>
       </div>
     </div>
-    <div>
-      <label class="form-check-label" for="inp-shuffle" title="">
-        Importar Arquivos de treinamento
-      </label>
-      <input type="file" id="fileInput" accept=".zip" name="file_training">
-    </div>
-    <div>
-      <label class="form-check-label" for="inp-shuffle" title="">
-        Importar Arquivos de validação
-      </label>
-      <input type="file" id="fileInput" accept=".zip" name="file_validation">
-    </div>
+    <!-- Checkbox para escolher entre caminho ou upload -->
+    <label>
+      <input type="checkbox" id="useAbsolutePathCheckbox"> Utilizar caminho absoluto do dataset no servidor
+  </label>
+
+  <!-- Input para o caminho absoluto -->
+  <div id="absolutePathSection" style="display:none;">
+      <label for="trainDatasetPath">Caminho do Dataset de Treinamento:</label>
+      <input type="text" id="trainDatasetPath" name="train_dataset_path" class="form-control" placeholder="Caminho absoluto do dataset de treinamento" value="/home/gabriel/TCC/automatic-training-of-AI-models/training_files/train">
+      <br>
+      <label for="valDatasetPath">Caminho do Dataset de Validação:</label>
+      <input type="text" id="valDatasetPath" name="valid_dataset_path" class="form-control" placeholder="Caminho absoluto do dataset de validação" value="/home/gabriel/TCC/automatic-training-of-AI-models/training_files/test">
+  </div>
+
+  <!-- Input para upload de arquivos -->
+  <div id="fileUploadSection">
+      <label for="trainDataset">Upload Dataset de Treinamento:</label>
+      <input type="file" id="trainDataset" name="file_training" required accept=".zip">
+      <br>
+      <label for="valDataset">Upload Dataset de Validação:</label>
+      <input type="file" id="valDataset" name="file_validation" required accept=".zip">
+  </div>
     <div class="col-12">
       <button id="btn-fit-model" type="submit" class="btn btn-primary" disabled>Treinar Modelo</button>
     </div>

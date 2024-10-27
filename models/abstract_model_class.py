@@ -8,8 +8,8 @@ from models.save_files_class import SaveFiles
 import os
 
 class ImageClassification(ABC, SaveFiles):
-    TRAINING_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/train'
-    TEST_DIR='/home/sgabriel_santos/TCC/automatic-training-of-AI-models/training_files/test'
+    TRAINING_DIR=None
+    TEST_DIR=None
     MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
     
     epochs = 1
@@ -17,6 +17,8 @@ class ImageClassification(ABC, SaveFiles):
     seed = 10
     batch_size = 10
     im_shape = (250,250)
+    
+    is_absolute_path = None
     
     train_generator = None
     validation_generator = None
@@ -37,6 +39,13 @@ class ImageClassification(ABC, SaveFiles):
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
+        self.TRAINING_DIR = 'training_files/train'
+        self.TEST_DIR = 'training_files/test'
+        
+        self.is_absolute_path = data['is_absolute_path']
+        if self.is_absolute_path:
+            self.TRAINING_DIR = data['train_dataset_path']
+            self.TEST_DIR = data['valid_dataset_path']
             
     def get_or_build_train_generator(self):
         # Generator para parte train
