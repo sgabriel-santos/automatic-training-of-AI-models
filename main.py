@@ -7,7 +7,7 @@ from contextlib import asynccontextmanager
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    generate_text_model_to_llm_in_file(False)
+    generate_text_model_to_llm_in_file(0)
     yield
 
 app = FastAPI(lifespan=lifespan)

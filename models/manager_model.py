@@ -30,6 +30,8 @@ class Managermodel:
     im_shape = (250,250)
     
     model_used: ImageClassification | None = None
+    
+    error = None
 
     def __new__(cls, *args, **kwargs):
         if cls._instance is None:
@@ -93,17 +95,21 @@ class Managermodel:
         
     def fit_model(self, generate_text_model_to_llm_in_file):
         self.__update_training_model(True)
-        generate_text_model_to_llm_in_file()
+        generate_text_model_to_llm_in_file(1)
         try:
             print('Iniciando fluxo de treinamento do modelo')
             if not exists_directory(self.TRAINING_DIR):
                 print('Error: Diretório de treinamento não encontrado')
+                self.error = "Diretório de treinamento não encontrado"
                 self.__update_training_model(False)
+                generate_text_model_to_llm_in_file(-1)
                 return False
             
             if(not exists_directory(self.TEST_DIR)):
                 print('Error: Diretório de test não encontrado')
+                self.error = "Diretório de test não encontrado"
                 self.__update_training_model(False)
+                generate_text_model_to_llm_in_file(-1)
                 return False
             
             history = self.model_used.fit_model()
@@ -112,12 +118,23 @@ class Managermodel:
             self.__update_training_model(False)
             print('Parando fluxo de treinamento do modelo.')
             print(f'Detalhe da excessão: {e}')
+            self.error = e
+            generate_text_model_to_llm_in_file(-1)
             raise    
         
         print('Modelo Treinado com sucesso')
-        self.model_used.test_model(history)
+        try:
+            self.model_used.test_model(history)
+        except Exception as e:
+            self.__update_training_model(False)
+            print('Erro durante realização de testes no modelo')
+            print(f'Detalhe da excessão: {e}')
+            self.error = f"Erro durante realização de testes no modelo. Detalhe da excessão: {e}"
+            generate_text_model_to_llm_in_file(-1)
+            raise
+            
         self.__update_training_model(False)
-        generate_text_model_to_llm_in_file()
+        generate_text_model_to_llm_in_file(2)
         
         
     def predict(self, image) -> dict | None:

@@ -44,8 +44,8 @@ async def test_model_screen(request: Request):
         "test_model.html", 
         {
             "request": request, 
-            "validation_loss": vl, 
-            "validation_accuracy": va, 
-            "test_loss": tl, 
-            "test_accuracy": ta
+            "validation_loss": f"{float(vl):.3f}", 
+            "validation_accuracy": f"{float(va) * 100:.2f}", 
+            "test_loss": f"{float(tl):.3f}", 
+            "test_accuracy": f"{float(ta) * 100:.2f}"
         })

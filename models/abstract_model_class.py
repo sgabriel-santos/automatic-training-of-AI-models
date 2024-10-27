@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 import numpy as np
-from sklearn.metrics import classification_report
+from sklearn.metrics import classification_report, precision_score, recall_score, f1_score
 from tf_keras.callbacks import History
 from tf_keras.models import load_model, Model
 from tf_keras.preprocessing.image import ImageDataGenerator
@@ -21,6 +21,13 @@ class ImageClassification(ABC, SaveFiles):
     train_generator = None
     validation_generator = None
     test_generator = None
+    
+    val_loss = val_accuracy = None
+    test_loss = test_accuracy = None
+    precision = recall = f1 = None
+    
+    confusion_matrix_values = None
+
     
     def __init__(self): pass
     
@@ -92,29 +99,38 @@ class ImageClassification(ABC, SaveFiles):
 
         # Using the validation dataset
         validation_score = model.evaluate(self.get_or_build_validation_generator())
-        val_loss, val_accuracy = validation_score[0], validation_score[1]
-        print('Val loss:', val_loss)
-        print('Val accuracy:', val_accuracy)
+        self.val_loss, self.val_accuracy = validation_score[0], validation_score[1]
+        print('Val loss:', self.val_loss)
+        print('Val accuracy:', self.val_accuracy)
 
         # Using the test dataset
         test_generator = self.get_or_build_test_generator()
         test_score_score = model.evaluate(test_generator)
-        test_loss, test_accuracy = test_score_score[0], test_score_score[1]
-        print('Test loss:', test_loss)
-        print('Test accuracy:', test_accuracy)
+        self.test_loss, self.test_accuracy = test_score_score[0], test_score_score[1]
+        print('Test loss:', self.test_loss)
+        print('Test accuracy:', self.test_accuracy)
 
         #On test dataset
         Y_pred = model.predict(test_generator)
         y_pred = np.argmax(Y_pred, axis=1)
         target_names = self.get_classes()
+        
+        # Precisão, Revocação e F1-Score
+        self.precision = precision_score(test_generator.classes, y_pred, average='weighted')
+        self.recall = recall_score(test_generator.classes, y_pred, average='weighted')
+        self.f1 = f1_score(test_generator.classes, y_pred, average='weighted')
+
+        print(f"Precisão (Precision): {self.precision * 100:.2f}%")
+        print(f"Revocação (Recall): {self.recall * 100:.2f}%")
+        print(f"F1-Score: {self.f1 * 100:.2f}%")
 
         #Classification Report
         print('Classification Report')
         print(classification_report(test_generator.classes, y_pred, target_names=target_names))
         
-        self.save_metrics(val_loss, val_accuracy, test_loss, test_accuracy)
+        self.save_metrics(self.val_loss, self.val_accuracy, self.test_loss, self.test_accuracy)
         self.save_training_validation_loss_and_accuracy_graph(history)
-        self.save_confusion_matrix_graph(test_generator, y_pred, target_names, normalize=False)
+        self.confusion_matrix_values = self.save_confusion_matrix_graph(test_generator, y_pred, target_names, normalize=False)
         print('Model training completed successfully')
         
     def fit_and_save_model(self, model: Model) -> History:

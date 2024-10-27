@@ -51,7 +51,7 @@ class SaveFiles():
             print('Salvando Métricas')
             os.makedirs(os.path.dirname(self.directory_to_save_metrics), exist_ok=True)
             with open(self.directory_to_save_metrics, 'w') as file:
-                file.write(f'{val_loss:.3f} {val_accuracy:.3f} {test_loss:.3f} {test_accuracy:.3f}')
+                file.write(f'{val_loss} {val_accuracy} {test_loss} {test_accuracy}')
             print('Métricas salvas')
         except FileNotFoundError:
             print(f'Erro: O diretório ou arquivo {self.directory_to_save_metrics} não foi encontrado.')
@@ -146,7 +146,7 @@ class SaveFiles():
             os.makedirs(os.path.dirname(self.directory_to_save_image), exist_ok=True)
             plt.savefig(f'{self.directory_to_save_image}confusion_matrix.png')
             print('Matriz confusão salva com sucesso')
-            return True
+            return cm.ravel()
         except Exception as e:
             print('Erro ao salvar matriz confusão')
             print(f'Error: {e}')
