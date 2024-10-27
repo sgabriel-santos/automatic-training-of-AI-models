@@ -10,7 +10,7 @@ TEXT_MODEL_TO_LLM_DIRECTORY = 'llm/utils/text_model_to_llm.txt'
 
 def build_status_and_result_model(manager_model: Managermodel, step: int):
     if step == -1:
-        status_model = "O treinamento do modelo foi inciado, porém apresentou uma falha durante o treinamento"
+        status_model = "O treinamento do modelo foi iniciado, porém apresentou uma falha durante o treinamento"
         result_model = f"O modelo apresentou o seguinte erro: {manager_model.error}"
     
     if step == 1:
