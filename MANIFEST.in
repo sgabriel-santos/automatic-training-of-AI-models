@@ -1,0 +1,5 @@
+include README.md
+include LICENSE
+recursive-include autotrain_with_llm/ui/statics/scripts *
+recursive-include autotrain_with_llm/ui/statics/styles *
+recursive-include autotrain_with_llm/ui/templates *

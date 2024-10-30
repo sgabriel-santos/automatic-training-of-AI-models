@@ -1,13 +1,16 @@
 from fastapi import APIRouter, Request, status
 from starlette.responses import RedirectResponse, HTMLResponse, StreamingResponse
-import sys
 from io import StringIO
 from fastapi.templating import Jinja2Templates
-from middleware import utils_log
+from autotrain_with_llm.middleware import utils_log
+import sys
+import os
 
 router = APIRouter(tags=["logs"])
 
-templates = Jinja2Templates(directory="ui/templates")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates_path = os.path.join(BASE_DIR, "../ui/templates")
+templates = Jinja2Templates(directory=templates_path)
 
 @router.get("/logs", response_class=StreamingResponse)
 async def get_logs():

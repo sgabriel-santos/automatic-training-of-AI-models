@@ -1,15 +1,18 @@
 from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.templating import Jinja2Templates
-from models.manager_model import Managermodel
-from models.save_files_class import SaveFiles
+from autotrain_with_llm.models.manager_model import Managermodel
+from autotrain_with_llm.models.save_files_class import SaveFiles
 import inspect
+import os
 
 # Model Imported
 manager_model = Managermodel()
 
 router = APIRouter(tags=["screens"])
 
-templates = Jinja2Templates(directory="ui/templates")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+templates_path = os.path.join(BASE_DIR, "../ui/templates")
+templates = Jinja2Templates(directory=templates_path)
 
 @router.get('/')
 async def home_screen(request: Request):

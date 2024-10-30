@@ -1,12 +1,13 @@
 from fastapi import HTTPException, status
-from models.manager_model import Managermodel
+from autotrain_with_llm.models.manager_model import Managermodel
 from logging import error
 from groq import Groq
 import textwrap
 import os
 
-API_KEY_DIRECTORY = 'llm/utils/groq_api_key.txt'
-TEXT_MODEL_TO_LLM_DIRECTORY = 'llm/utils/text_model_to_llm.txt'
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+API_KEY_DIRECTORY = os.path.join(BASE_DIR, "../llm/utils/groq_api_key.txt")
+TEXT_MODEL_TO_LLM_DIRECTORY = os.path.join(BASE_DIR, "../llm/utils/text_model_to_llm.txt")
 
 def build_status_and_result_model(manager_model: Managermodel, step: int):
     if step == -1:

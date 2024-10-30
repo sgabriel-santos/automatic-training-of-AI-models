@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from models.manager_model import Managermodel
+from autotrain_with_llm.models.manager_model import Managermodel
 import sys
 
 router = APIRouter(tags=["utils"])

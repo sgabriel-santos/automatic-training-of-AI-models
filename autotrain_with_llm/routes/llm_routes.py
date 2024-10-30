@@ -1,6 +1,6 @@
 from fastapi import APIRouter
-from llm.llm_with_groq_and_chromadb import send_answer
-from middleware.utils_llm import register_groq_api_key_in_file
+from autotrain_with_llm.llm.llm_with_groq_and_chromadb import send_answer
+from autotrain_with_llm.middleware.utils_llm import register_groq_api_key_in_file
 
 router = APIRouter(tags=["llm"])
 

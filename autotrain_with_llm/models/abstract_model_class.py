@@ -4,13 +4,14 @@ from sklearn.metrics import classification_report, precision_score, recall_score
 from tf_keras.callbacks import History
 from tf_keras.models import load_model, Model
 from tf_keras.preprocessing.image import ImageDataGenerator
-from models.save_files_class import SaveFiles
+from autotrain_with_llm.models.save_files_class import SaveFiles
 import os
 
 class ImageClassification(ABC, SaveFiles):
     TRAINING_DIR=None
     TEST_DIR=None
-    MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_NAME_RESULT = os.path.join(BASE_DIR, "results/image_classification.model.keras")
     
     epochs = 1
     shuffle = True
@@ -39,8 +40,8 @@ class ImageClassification(ABC, SaveFiles):
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
-        self.TRAINING_DIR = 'training_files/train'
-        self.TEST_DIR = 'training_files/test'
+        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../training_files/train")
+        self.TEST_DIR = os.path.join(self.BASE_DIR, "../training_files/test")
         
         self.is_absolute_path = data['is_absolute_path']
         if self.is_absolute_path:

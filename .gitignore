@@ -1,6 +1,11 @@
 venv
 __pycache__
-training_files
-results
-ui/statics/images/
-llm/utils/*.txt
+
+build
+autotrain_with_llm.egg-info
+dist
+
+autotrain_with_llm/training_files
+autotrain_with_llm/models/results
+autotrain_with_llm/ui/statics/images/
+autotrain_with_llm/llm/utils/*.txt

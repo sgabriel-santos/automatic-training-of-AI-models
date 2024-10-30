@@ -6,10 +6,12 @@ import numpy as np
 import itertools
 
 class SaveFiles():
-    directory_to_save_image = 'ui/statics/images/'
-    directory_to_save_classes = 'models/results/classes.txt'
-    directory_to_save_metrics = 'models/results/metrics.txt'
-    MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    templates_path = os.path.join(BASE_DIR, "results/image_classification.model.keras")
+    directory_to_save_image = os.path.join(BASE_DIR, "../ui/statics/images/")
+    directory_to_save_classes = os.path.join(BASE_DIR, "results/classes.txt")
+    directory_to_save_metrics = os.path.join(BASE_DIR, "results/metrics.txt")
+    MODEL_NAME_RESULT = os.path.join(BASE_DIR, "results/image_classification.model.keras")
     
     def __init__(self): pass
     

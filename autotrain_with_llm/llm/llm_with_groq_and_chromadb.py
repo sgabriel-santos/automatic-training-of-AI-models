@@ -2,7 +2,7 @@ import chromadb
 from sentence_transformers import SentenceTransformer
 from groq import AuthenticationError
 from fastapi import HTTPException, status
-from middleware.utils_llm import get_llm_instance, get_text_model_to_llm
+from autotrain_with_llm.middleware.utils_llm import get_llm_instance, get_text_model_to_llm
 
 # Constants
 COLLECTION_NAME = 'treinamento_modelo'

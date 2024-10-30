@@ -1,8 +1,8 @@
 from fastapi import status, BackgroundTasks, UploadFile, File, HTTPException, status, Form, APIRouter
 from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
-from models.manager_model import Managermodel
-from middleware import utils_log, utils_llm
+from autotrain_with_llm.models.manager_model import Managermodel
+from autotrain_with_llm.middleware import utils_log, utils_llm
 import os
 import sys
 
@@ -76,7 +76,8 @@ async def predict(image: UploadFile = File(...)):
 
 @router.get("/download_model")
 async def download_model():
-    file_path = "models/results/image_classification.model.keras"
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    file_path = os.path.join(BASE_DIR, "../models/results/image_classification.model.keras")
 
     if os.path.exists(file_path):
         return FileResponse(file_path, filename="model.keras")

@@ -1,8 +1,8 @@
-from models.models import name_to_model
-from models.abstract_model_class import ImageClassification
+from autotrain_with_llm.models.models import name_to_model
+from autotrain_with_llm.models.abstract_model_class import ImageClassification
 from tf_keras.models import load_model
 from fastapi import UploadFile
-from middleware.utils_os import exists_directory
+from autotrain_with_llm.middleware.utils_os import exists_directory
 import shutil
 import zipfile
 import os
@@ -21,7 +21,9 @@ class Managermodel:
     
     TRAINING_DIR=None
     TEST_DIR=None
-    MODEL_NAME_RESULT = 'models/results/image_classification.model.keras'
+    
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    MODEL_NAME_RESULT = os.path.join(BASE_DIR, "results/image_classification.model.keras")
     
     epochs = None
     shuffle = None
@@ -77,8 +79,10 @@ class Managermodel:
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
-        self.TRAINING_DIR = 'training_files/train'
-        self.TEST_DIR = 'training_files/test'
+        
+        os.path.join(self.BASE_DIR, "../training_files/train")
+        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../training_files/train")
+        self.TEST_DIR = os.path.join(self.BASE_DIR, "../training_files/test")
         self.is_absolute_path = data['is_absolute_path']
         
         if not self.is_absolute_path:
@@ -165,7 +169,9 @@ class Managermodel:
     
 
     def get_classes(self) -> list[str]:
-        with open('models/results/classes.txt', 'r') as file:
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        file_class_dir = os.path.join(BASE_DIR, "results/classes.txt")
+        with open(file_class_dir, 'r') as file:
             line = file.readline().replace("'", '"')
             return json.loads(line)
     
@@ -208,7 +214,8 @@ class Managermodel:
         with open(temp_zip_path, "wb") as temp_zip:
             shutil.copyfileobj(file.file, temp_zip)
         
-        extract_dir = f"training_files/{prefix_path}"
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        extract_dir = os.path.join(BASE_DIR, f"../training_files/{prefix_path}")
         os.makedirs(extract_dir, exist_ok=True)
 
         # Descompacta o arquivo zip
