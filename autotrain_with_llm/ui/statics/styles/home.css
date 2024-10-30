@@ -48,7 +48,7 @@ i {
     margin-right: 0.2vw;
 }
 
-#loader-model-train {
+#loader-model-train, #loader-config-parameters {
     margin-top: 4vh;
     display: none;
 }

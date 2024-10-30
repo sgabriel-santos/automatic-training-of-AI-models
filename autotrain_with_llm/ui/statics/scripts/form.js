@@ -9,28 +9,29 @@ async function submitForm(event) {
     formData.set('is_absolute_path', isAbsolutePath)
 
     try {
+      toggleFitButton(false)
+      toggleLoaderConfigParameter(true)
+
       const response = await fetch('/fit_model', {
           method: 'POST',
           body: formData
       });
 
       if (!response.ok) {
-          const error = await response.json();
-          alert(`Error: ${error.detail}`);
-          return;
+        const error = await response.json();
+        alert(`Error: ${error.detail}`);
+        toggleFitButton(true)
+        toggleLoaderConfigParameter(false)
+        return;
       }
-      
-      let btnFitModel = document.querySelector('#btn-fit-model')
-      btnFitModel.disabled = true
 
-      let loaderModelTrain = document.querySelector('#loader-model-train')
-      loaderModelTrain.style.display = 'block'
+      toggleLoaderConfigParameter(false)
+      toggleLoaderTraining(true)
     } catch (error) {
         console.error('Error submitting form:', error);
         alert('Error submitting form');
     }
 }
-
 
 document.addEventListener('DOMContentLoaded', async (event) => {
   // Função para alternar entre input de caminho absoluto e upload de arquivo
@@ -74,9 +75,22 @@ document.addEventListener('DOMContentLoaded', async (event) => {
   if (!response.ok) throw new Error('Network response was not ok ' + response.statusText);
   const data = await response.json();
 
-  let btnFitModel = document.querySelector('#btn-fit-model')
-  btnFitModel.disabled = data? true: false
-
-  let loaderModelTrain = document.querySelector('#loader-model-train')
-  loaderModelTrain.style.display = data? 'block': 'none'
+  toggleFitButton(!data)
+  toggleLoaderTraining(data)
 });
+
+
+function toggleFitButton(isEnable){
+  const btnFit= document.getElementById('btn-fit-model');
+  btnFit.disabled = !isEnable
+}
+
+function toggleLoaderConfigParameter(isToShow){
+  let loaderConfigParameters = document.querySelector('#loader-config-parameters')
+  loaderConfigParameters.style.display = isToShow? 'block': 'none'
+}
+
+function toggleLoaderTraining(isToShow){
+  let loaderModelTrain = document.querySelector('#loader-model-train')
+  loaderModelTrain.style.display = isToShow? 'block': 'none'
+}
