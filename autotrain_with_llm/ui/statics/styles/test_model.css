@@ -12,3 +12,8 @@
 .loss-accuracy{
     margin: 10px;
 }
+
+#loader-test-model, #loader-download-model{
+    display: none;
+    margin-top: 5px;
+}

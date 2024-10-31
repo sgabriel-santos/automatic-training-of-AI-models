@@ -3,6 +3,7 @@
 {% block title %}Código Fonte{% endblock %}
 
 {% block content %}
+<script src="{{ url_for('static', path='/scripts/test_model.js') }}"></script>
 <div class="result-model">
   <h3>Resultado do Modelo Treinado</h3>
   <div class="loss-accuracy">
@@ -22,60 +23,13 @@
   <input class="form-control" type="file" id="formFile">
   <button id="test-model" class="btn btn-primary" style="margin-top: 2vh;" disabled>Testar modelo</button>
   <button id="download-model" class="btn btn-primary" style="margin-top: 2vh;">Fazer Download do Modelo</button>
+  <div id="loader-test-model" class="display-none">
+    <div class="spinner-border" role="status"></div>
+    <span class="sr-only">Identificando categoria da imagem...</span>
+  </div>
+  <div id="loader-download-model" class="display-none">
+    <div class="spinner-border" role="status"></div>
+    <span class="sr-only">Preparando o download do modelo...</span>
+  </div>
 </div>
-
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    const fileInput = document.getElementById('formFile');
-    const testButton = document.getElementById('test-model');
-    const downloadModelButton = document.getElementById('download-model')
-
-    downloadModelButton.addEventListener('click', function() {
-      fetch('/download_model', {
-          method: 'GET'
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Network response was not ok');
-          }
-          return response.blob(); // Converter a resposta para um blob
-      })
-      .then(blob => {
-          const url = window.URL.createObjectURL(blob);
-          const a = document.createElement('a');
-          a.href = url;
-          a.download = 'model.keras'; // Nome do arquivo para download
-          document.body.appendChild(a); // Adicionar o link ao corpo do documento
-          a.click(); // Simular o clique no link
-          a.remove(); // Remover o link após o clique
-          alert(`Download do modelo inciado com sucesso!!`);
-      })
-      .catch(error => {
-          console.error('Houve um erro no download do arquivo:', error);
-      });
-    });
-
-    fileInput.addEventListener('change', () => testButton.disabled = !fileInput.files.length);
-    testButton.addEventListener('click', function() {
-      const file = fileInput.files[0];
-      if (file) {
-        const formData = new FormData();
-        formData.append('image', file);
-
-        fetch('/predict', {
-          method: 'POST',
-          body: formData
-        })
-        .then(response => response.json())
-        .then(data => {
-          alert(`Prediction: ${data.predicted_class}`);
-        })
-        .catch((error) => {
-          console.log('Um erro ocorreu ao buscar informações de predição do modelo')
-          console.error('Error:', error);
-        });
-      }
-    });
-  });
-</script>
 {% endblock %}
