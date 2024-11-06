@@ -167,6 +167,8 @@ body.show-chatbot .chatbot-popup {
     padding: 12px 16px;
     max-width: 75%;
     font-size: 0.95rem;
+    overflow-x: hidden;
+    text-overflow: ellipsis;
 }
 
 .chat-body .bot-message .message-text {

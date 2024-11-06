@@ -10,4 +10,4 @@ async def send_message(text: str):
 
 @router.post('/register_groq_api_key', status_code=204)
 async def register_groq_api_key(api_key: str):
-    register_groq_api_key_in_file(api_key)
+    register_groq_api_key_in_file(api_key.replace('"', "").strip())

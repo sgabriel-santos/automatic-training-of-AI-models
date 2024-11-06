@@ -11,6 +11,20 @@ const userData = {
     message: null
 }
 
+let state_machine = 0 // Usuário ainda não iniciou conversa com o chat
+// 1 -> Usuário iniciou conversa. Porém, ainda não configurou sua chave
+// 2 -> Usuário iniciou conversa e sua chave foi configurada com sucesso
+
+const sendRequestToAPI = async (endpoint, method) => {
+    const requestOptions = {
+        method: method,
+        headers: { "Content-Type": "application/json" },
+    }
+
+    const response = await fetch(endpoint, requestOptions)
+    return response
+}
+
 const createMessageElement = (content, ...classes) => {
     const div = document.createElement("div")
     div.classList.add("message", ...classes)
@@ -18,31 +32,48 @@ const createMessageElement = (content, ...classes) => {
     return div
 }
 
-
 const generateBotResponse = async (incomingMessageDiv) => {
-    const requestOptions = {
-        method: "GET",
-        headers: { "Content-Type": "application/json" },
-    }
-
+    let responseText;
     try {
-        const response = await fetch(`/send_message?text=${JSON.stringify(userData.message)}`, requestOptions)
-        const responseText = await response.json();
-        if (!response.ok) {
-            const error = await response.json();
-            alert(`Error: ${error.detail}`);
-            return;
-        }
+        if(state_machine != 1){
+            const response = await sendRequestToAPI(`/send_message?text=${JSON.stringify(userData.message)}`, "GET")
+            if (!response.ok) responseText = await generateBotResponseByErrorAndUpdateStateMachine(response)
+            else responseText = await response.json()
 
-        const messageElement = incomingMessageDiv.querySelector(".message-text")
-        addMessageInLocalStorage('bot-message', responseText)
-        messageElement.innerText = responseText
-        incomingMessageDiv.classList.remove("thinking")
-        chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"})
+        }else {
+            const response = await sendRequestToAPI(`/register_groq_api_key?api_key=${JSON.stringify(userData.message)}`, "POST")
+            if (!response.ok) {
+                const error = await response.json();
+                console.log(error.detail)
+                console.log(response.status)
+                responseText = `
+                    ⚠️ Enfrentamos um problema ao atualizar o seu Token de acesso.
+
+                    Por favor, tente novamente mais tarde.
+                `
+            }else {
+                responseText = `
+                    Seu Token foi salvo com sucesso 🙌. 
+                    Podemos dar continuidade a nossa conversa... Qual sua dúvida?
+                `
+                state_machine = 2
+            }
+        }
     }
     catch {
-
+        console.log('Excessão gerada!!')
+        responseText = `
+            ⚠️ Problema de Conexão com o Serviço do LLM
+            
+            No momento, estamos enfrentando dificuldades para conectar ao serviço do LLM. Por favor, tente novamente mais tarde.
+        `
     }
+    
+    const messageElement = incomingMessageDiv.querySelector(".message-text")
+    addMessageInLocalStorage('bot-message', responseText)
+    messageElement.innerText = responseText
+    incomingMessageDiv.classList.remove("thinking")
+    chatBody.scrollTo({top: chatBody.scrollHeight, behavior: "smooth"})
 }
 
 const handleHistoryMessage = () => {
@@ -114,3 +145,59 @@ messageInput.addEventListener("input", () => {
 sendMessageButton.addEventListener("click", (e) => handleOutgoingMessage(e))
 chatbotToggler.addEventListener("click", () => document.body.classList.toggle("show-chatbot"));
 closeChatbot.addEventListener("click", () => document.body.classList.remove("show-chatbot"));
+
+// Utils Messages
+const generateBotResponseByErrorAndUpdateStateMachine = async (response) => {
+    if(response.status == 424){
+        responseText = `
+            ⚠️ Atenção: Chave Groq Necessária!
+
+            Para utilizar o assistente, você precisa configurar uma chave de acesso.
+
+            1. Acesse o link para gerar sua chave: https://console.groq.com/keys
+            
+            Nota: A chave deve começar com "gsk_".
+            
+            2. Copie e cole a chave como resposta nesta conversa.
+            
+            Este processo é rápido e gratuito 😁.
+        `;
+        state_machine = 1;
+    }
+    else if(response.status == 401){
+        responseText = `
+            ⚠️ Token de Acesso Inválido
+
+            Parece que a chave Groq configurada não é válida. Para corrigir isso, siga os passos abaixo para configurar um token válido e continuar a conversa:
+
+            1. Acesse o link para gerar uma nova chave: https://console.groq.com/keys
+
+            Nota: A chave gerada deve começar com o prefixo "gsk_".
+            
+            2. Copie e cole a nova chave como resposta nesta conversa.
+
+            Este processo é simples e gratuito 😁.
+        `
+        state_machine = 1;
+    }
+    else if(response.status == 503){
+        responseText = `
+            ⚠️ Problema de Conexão com o Serviço do LLM
+            
+            No momento, estamos enfrentando dificuldades para conectar ao serviço do LLM. Por favor, tente novamente mais tarde.
+        `
+        state_machine = 0;
+    }
+    else{
+        const error = await response.json();
+        console.log(error.detail)
+        console.log(response.status)
+        responseText = `
+            ⚠️ Problema de Conexão com o Serviço do LLM
+            
+            No momento, estamos enfrentando dificuldades para conectar ao serviço do LLM. Por favor, tente novamente mais tarde.
+        `
+        state_machine = 0;
+    }
+    return responseText
+}
