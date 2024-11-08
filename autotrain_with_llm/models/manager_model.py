@@ -117,9 +117,9 @@ class Managermodel:
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
                     )
-            
-            self.TRAINING_DIR = data['train_dataset_path']
-            self.TEST_DIR = data['valid_dataset_path']
+                
+            self.__copy_directory(data['train_dataset_path'], self.TRAINING_DIR)
+            self.__copy_directory(data['valid_dataset_path'], self.TEST_DIR)
     
     
     def is_training_model(self) -> bool:
@@ -268,14 +268,53 @@ class Managermodel:
         # Remove o arquivo zip temporário
         os.remove(temp_zip_path)
         return classes
+    
+    def __copy_directory(self, source, destination):
+        """
+        Copia um diretório de uma origem para um destino.
         
+        Parâmetros:
+        source (str): Caminho do diretório de origem.
+        destination (str): Caminho do diretório de destino.
+        """
+        # Verifica se o diretório de origem existe
+        if not os.path.exists(source):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Diretório de origem '{source}' não existe."
+            )
+
+        # Verifica se o diretório de destino já existe
+        if os.path.exists(destination):
+            print(f"Diretório de destino '{destination}' já existe. Removendo...")
+            shutil.rmtree(destination)  # Remove o diretório destino, se já existir
+
+        try:
+            # Copia todo o conteúdo do diretório de origem para o destino
+            shutil.copytree(source, destination)
+            print(f"Diretório copiado com sucesso de '{source}' para '{destination}'.")
+
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail=f"Ocorreu um erro ao copiar o diretório: {e}"
+            )
+            
         
     def __is_valid_directory_structure(self, base_dir):
         """
         Verifica se o diretório descompactado possui a estrutura correta:
-        - Vários diretórios
-        - Cada diretório contém múltiplas imagens
+            - O diretório base existe
+            - Vários diretórios estão presentes no diretório base
+            - Cada diretório contém múltiplas imagens
         """
+        # Verifica se o diretório base existe
+        if not os.path.exists(base_dir):
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail=f"Diretório '{base_dir}' não existe."
+            )
+    
         classes = []
         for root, dirs, files in os.walk(base_dir):
             # Certifique-se de que existem subdiretórios no     diretório base
