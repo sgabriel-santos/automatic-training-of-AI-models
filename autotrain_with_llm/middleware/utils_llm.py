@@ -22,7 +22,6 @@ def build_status_and_result_model(manager_model: Managermodel, step: int):
         status_model = "O treinamento do modelo foi concluído"
         result_model = f"""
             Após o treinamento, as métricas de desempenho do modelo foram as seguintes:
-            * Classes encontradas no Treinamento: ['glioma', 'meningioma', 'pituitary tumor']
             * Acurácia no Conjunto de Treinamento: {manager_model.model_used.test_accuracy * 100:.2f}%
             * Acurácia no Conjunto de Validação: {manager_model.model_used.val_accuracy * 100:.2f}%
             * Perda (Loss) no Conjunto de Treinamento: {manager_model.model_used.test_loss}
@@ -51,6 +50,9 @@ def build_model_configuration_text(step: int):
         * shuffle: {manager_model.shuffle}
         * seed: {manager_model.seed}
         * batch_size: {manager_model.batch_size}
+        * Classes encontradas para treinamento: {manager_model.classes}
+        * Quantidade de imagens para treinamento do modelo: {1}
+        * Quantidade de imagens para validação do modelo: {2}
         
         Resultados do treinamento:
         {result_model}

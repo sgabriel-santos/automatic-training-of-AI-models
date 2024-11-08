@@ -31,6 +31,7 @@ class Managermodel:
     seed = None
     batch_size = None
     im_shape = (250,250)
+    classes = []
     
     is_absolute_path: bool = None
     
@@ -86,9 +87,37 @@ class Managermodel:
         self.is_absolute_path = data['is_absolute_path']
         
         if not self.is_absolute_path:
-            if(data['file_training'].filename): self.__save_files(data['file_training'], 'train')
-            if(data['file_validation'].filename): self.__save_files(data['file_validation'], 'test')
+            if(data['file_training'].filename): self.classes = self.__save_files(data['file_training'], 'train')
+            if(data['file_validation'].filename): 
+                if self.__save_files(data['file_validation'], 'test') != self.classes:
+                    raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
+                    )
         else:
+            is_valid_directory, current_class = self.__is_valid_directory_structure(data['train_dataset_path'])
+            
+            if not is_valid_directory:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"O dataset de treinamento enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+                )
+                
+            self.classes = current_class
+            is_valid_directory, current_class = self.__is_valid_directory_structure(data['valid_dataset_path'])
+            
+            if not is_valid_directory:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"O dataset de teste enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+                )
+                
+            if current_class != self.classes:
+                raise HTTPException(
+                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                        detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
+                    )
+            
             self.TRAINING_DIR = data['train_dataset_path']
             self.TEST_DIR = data['valid_dataset_path']
     
@@ -202,10 +231,13 @@ class Managermodel:
         return img_array
     
     
-    def __save_files(self, file: UploadFile, prefix_path: str):
+    def __save_files(self, file: UploadFile, prefix_path: str) -> list[str]:
         # Verifica se o arquivo é um zip
-        # if not file.filename.endswith('.zip'):
-        #     raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="File must be a ZIP")
+        if not file.filename.endswith('.zip'):
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="File must be a ZIP"
+            )
 
         # Define o caminho onde o zip será salvo temporariamente
         temp_zip_path = "temp.zip"
@@ -223,8 +255,10 @@ class Managermodel:
         # Descompacta o arquivo zip
         with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_dir)
+            
+        is_valid_directory, classes = self.__is_valid_directory_structure(extract_dir)
 
-        if not self.__is_valid_directory_structure(extract_dir):
+        if not is_valid_directory:
             mode = "treinamento" if prefix_path == 'train' else "teste"
             raise HTTPException(
                 status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
@@ -233,6 +267,7 @@ class Managermodel:
         
         # Remove o arquivo zip temporário
         os.remove(temp_zip_path)
+        return classes
         
         
     def __is_valid_directory_structure(self, base_dir):
@@ -241,14 +276,16 @@ class Managermodel:
         - Vários diretórios
         - Cada diretório contém múltiplas imagens
         """
+        classes = []
         for root, dirs, files in os.walk(base_dir):
-            # Certifique-se de que existem subdiretórios no diretório base
+            # Certifique-se de que existem subdiretórios no     diretório base
             if root == base_dir and not dirs:
                 return False
             
             # Certifique-se de que cada subdiretório contém imagens
             for dir_name in dirs:
+                classes.append(dir_name)
                 dir_path = os.path.join(root, dir_name)
                 if not any(file.lower().endswith(('.png', '.jpg', '.jpeg')) for file in os.listdir(dir_path)):
-                    return False
-        return True
+                    return False, []
+        return True, classes
