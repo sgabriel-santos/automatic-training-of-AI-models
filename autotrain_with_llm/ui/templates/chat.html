@@ -38,11 +38,5 @@
       </form>
      </div>
   </div>
-
-   <!-- Bloco de conteúdo das páginas -->
-   <main>
-    {% block content %}
-    <script src="{{ url_for('static', path='/scripts/chat.js') }}"></script>
-    {% endblock %}
-  </main>
+  <script src="{{ url_for('static', path='/scripts/chat.js') }}"></script>
 </body>

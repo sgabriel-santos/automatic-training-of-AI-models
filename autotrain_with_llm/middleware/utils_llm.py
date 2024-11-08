@@ -76,7 +76,7 @@ def generate_text_model_to_llm_in_file(step: int = 1) -> None:
     
     os.makedirs(os.path.dirname(TEXT_MODEL_TO_LLM_DIRECTORY), exist_ok=True)
     
-    with open(TEXT_MODEL_TO_LLM_DIRECTORY, 'w') as file:
+    with open(TEXT_MODEL_TO_LLM_DIRECTORY, 'w', encoding='utf-8') as file:
         text = ""
         
         if step == 0:

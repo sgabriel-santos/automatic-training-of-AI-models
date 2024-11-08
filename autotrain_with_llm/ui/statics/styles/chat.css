@@ -1,17 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: "Inter", sans-serif;
-}
-
-body {
-    min-height: 100vh;
-    /* background: linear-gradient(#EEEEFF, #C8C7FF); */
-}
-
 #chatbot-toggler {
     position: fixed;
     bottom: 30px;

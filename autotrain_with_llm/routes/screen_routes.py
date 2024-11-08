@@ -27,6 +27,11 @@ async def source_code_screen(request: Request):
     return templates.TemplateResponse("source_code.html", {"request": request, "function_code": function_code})
 
 
+@router.get('/database')
+async def database(request: Request):
+    return templates.TemplateResponse("database.html", {"request": request, "name": "Database"})
+
+
 @router.get('/test_model')
 async def test_model_screen(request: Request):
     try:

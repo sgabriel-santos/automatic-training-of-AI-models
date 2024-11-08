@@ -40,8 +40,8 @@ class ImageClassification(ABC, SaveFiles):
         self.shuffle = data['shuffle']
         self.seed = data['seed']
         self.batch_size = data['batch_size']
-        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../training_files/train")
-        self.TEST_DIR = os.path.join(self.BASE_DIR, "../training_files/test")
+        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/train")
+        self.TEST_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/test")
         
         self.is_absolute_path = data['is_absolute_path']
         if self.is_absolute_path:

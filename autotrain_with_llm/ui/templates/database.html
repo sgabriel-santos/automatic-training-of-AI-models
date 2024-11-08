@@ -1,0 +1,34 @@
+{% extends "index.html" %}
+
+{% block title %}Configurações para treinamento do modelo{% endblock %}
+
+{% block content %}
+<script src="{{ url_for('static', path='/scripts/database.js') }}"></script>
+<div class="config-content">
+  <div>
+    <h3>Configuração atual do modelo</h3>
+    <div id="model_config">
+      <span><b>Modelo Selecionado:</b> XCeption</span>
+      <span><b>Epoch:</b> 1</span>
+      <span><b>seed:</b> 10</span>
+      <span><b>batch_size:</b> 10</span>
+      <span><b>shuffle:</b> true</span>
+    </div>
+  </div>
+  <div id="container">
+    <div class="tab-buttons">
+    </div>
+  
+    <div class="tab-contents">
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+<!-- <div class="gallery-container"> -->
+</div>        
+{% endblock %}

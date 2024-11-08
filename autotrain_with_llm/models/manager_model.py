@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from autotrain_with_llm.models.models import name_to_model
 from autotrain_with_llm.models.abstract_model_class import ImageClassification
 from tf_keras.models import load_model
@@ -80,9 +81,8 @@ class Managermodel:
         self.seed = data['seed']
         self.batch_size = data['batch_size']
         
-        os.path.join(self.BASE_DIR, "../training_files/train")
-        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../training_files/train")
-        self.TEST_DIR = os.path.join(self.BASE_DIR, "../training_files/test")
+        self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/train")
+        self.TEST_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/test")
         self.is_absolute_path = data['is_absolute_path']
         
         if not self.is_absolute_path:
@@ -215,20 +215,27 @@ class Managermodel:
             shutil.copyfileobj(file.file, temp_zip)
         
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-        extract_dir = os.path.join(BASE_DIR, f"../training_files/{prefix_path}")
+        # Remove o diretório e todo o seu conteúdo
+        extract_dir = os.path.join(BASE_DIR, f"../ui/statics/images/training_files/{prefix_path}")
+        shutil.rmtree(extract_dir)
         os.makedirs(extract_dir, exist_ok=True)
 
         # Descompacta o arquivo zip
         with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_dir)
 
-        # if not self.__is_valid_directory_structure(dataset)
+        if not self.__is_valid_directory_structure(extract_dir):
+            mode = "treinamento" if prefix_path == 'train' else "teste"
+            raise HTTPException(
+                status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                detail=f"O dataset de {mode} enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+            )
         
         # Remove o arquivo zip temporário
         os.remove(temp_zip_path)
         
         
-    def __is_valid_directory_structure(base_dir):
+    def __is_valid_directory_structure(self, base_dir):
         """
         Verifica se o diretório descompactado possui a estrutura correta:
         - Vários diretórios
