@@ -14,23 +14,10 @@ router = APIRouter(tags=["utils"])
 async def training_model():
     return Managermodel().is_training_model()
 
-@router.post('/verify_library/{package_name}')
-async def verify_library(package_name: str):
-    try:
-        __import__(package_name)
-        return True
-    except ImportError:
-        print(f"{package_name} não está instalado. Instalando...")
-        # subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
-    finally:
-        # globals()[package_name] = __import__(package_name)
-        return False
+@router.get('/model_config')
+async def get_model_config():
+    return Managermodel().get_model_config()
 
-@router.get('/printar')
-async def printar():
-    print('testando')
-    print('Verificando saida do log')
-    return True
 
 @router.get("/images", response_model=Dict[str, List[str]])
 async def get_image_paths():
@@ -67,3 +54,22 @@ async def get_image_paths():
 async def get_image_url(request: Request):
     image_url = request.url_for('static', path='images/training_files/train/')
     return image_url
+
+@router.post('/verify_library/{package_name}')
+async def verify_library(package_name: str):
+    try:
+        __import__(package_name)
+        return True
+    except ImportError:
+        print(f"{package_name} não está instalado. Instalando...")
+        # subprocess.check_call([sys.executable, "-m", "pip", "install", package_name])
+    finally:
+        # globals()[package_name] = __import__(package_name)
+        return False
+
+
+@router.get('/printar')
+async def printar():
+    print('testando')
+    print('Verificando saida do log')
+    return True

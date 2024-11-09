@@ -2,7 +2,25 @@ let imageList;
 let url;
 let classes = [];
 
-document.addEventListener('DOMContentLoaded', async () => {
+const configParameters = async () => {
+    let modelConfig = await sendRequestToAPI("/model_config", "GET")
+    modelConfig = await modelConfig.json()
+
+    const model_name = document.querySelector(".model_name_value")
+    const epoch = document.querySelector(".epoch_value")
+    const seed = document.querySelector(".seed_value")
+    const batch_size = document.querySelector(".batch_size_value")
+    const shuffle = document.querySelector(".shuffle_value")
+
+
+    model_name.textContent = modelConfig['model_name'] || ''
+    epoch.textContent = modelConfig['epochs'] || ''
+    seed.textContent = modelConfig['seed'] || ''
+    batch_size.textContent = modelConfig['batch_size'] || ''
+    shuffle.textContent = modelConfig['shuffle'] || ''
+}
+
+const configDataset = async () => {
     let response = await sendRequestToAPI("/images", "GET")
     objCategoryImages = await response.json()
 
@@ -53,6 +71,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     
     const tabs = document.querySelectorAll('.tab-btn');
     tabs.forEach(t => t.addEventListener('click', () => tabClicked(t)));
+}
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await configParameters()
+    await configDataset()
 })
 
 const tabClicked = (tab) => {

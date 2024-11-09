@@ -26,6 +26,7 @@ class Managermodel:
     BASE_DIR = os.path.dirname(os.path.abspath(__file__))
     MODEL_NAME_RESULT = os.path.join(BASE_DIR, "results/image_classification.model.keras")
     
+    model_name = None
     epochs = None
     shuffle = None
     seed = None
@@ -203,6 +204,15 @@ class Managermodel:
         with open(file_class_dir, 'r') as file:
             line = file.readline().replace("'", '"')
             return json.loads(line)
+        
+    def get_model_config(self):
+        return {
+            "model_name": self.model_name,
+            "epochs": self.epochs,
+            "shuffle": self.shuffle,
+            "seed": self.seed,
+            "batch_size": self.batch_size
+        }
     
     
     def __update_training_model(self, is_training: bool) -> None:
