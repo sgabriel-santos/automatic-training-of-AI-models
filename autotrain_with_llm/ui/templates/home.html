@@ -1,0 +1,52 @@
+{% extends "index.html" %}
+''
+{% block title %}Detalhes da Ferramenta{% endblock %}
+
+{% block content %}
+
+<div class="home-content">
+  <div class="tool-details-text">
+    <span>Esta é uma ferramenta no code para o treinamento e análise de modelos de classificação de imagens.</span>
+    <span>O sistema possui um assistente virtual inteligente integrado para que você possa tirar suas dúvidas a respeito do treinamento</span>
+  </div>
+
+  <a href="/form" class="btn-create-new-model">
+    Criar um novo modelo
+  </a>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    let nav = document.querySelector("nav")
+    nav.style.display = 'none'
+  })
+</script>
+
+<style>
+  .home-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 60vw;
+    align-self: center;
+  }
+  
+  .tool-details-text span{
+    text-align: center;
+    display: block;
+  }
+
+  .btn-create-new-model {
+    margin-top: 30px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #5350C4;
+    color: white;
+    border: none;
+    text-decoration: none;
+  }
+</style>
+
+{% endblock %}

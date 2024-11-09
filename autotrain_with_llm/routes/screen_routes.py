@@ -16,6 +16,10 @@ templates = Jinja2Templates(directory=templates_path)
 
 @router.get('/')
 async def home_screen(request: Request):
+    return templates.TemplateResponse("home.html", {"request": request,  "name": "Teste Jinja"})
+
+@router.get('/form')
+async def form_screen(request: Request):
     return templates.TemplateResponse("form.html", {"request": request,  "name": "Teste Jinja"})
 
 
@@ -27,9 +31,9 @@ async def source_code_screen(request: Request):
     return templates.TemplateResponse("source_code.html", {"request": request, "function_code": function_code})
 
 
-@router.get('/database')
-async def database(request: Request):
-    return templates.TemplateResponse("database.html", {"request": request, "name": "Database"})
+@router.get('/dataset')
+async def dataset(request: Request):
+    return templates.TemplateResponse("dataset.html", {"request": request, "name": "Dataset"})
 
 
 @router.get('/test_model')
