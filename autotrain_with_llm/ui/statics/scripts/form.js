@@ -81,8 +81,8 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
 
 function toggleFitButton(isEnable){
-  const btnFit= document.getElementById('btn-fit-model');
-  btnFit.disabled = !isEnable
+  const btnTrain= document.getElementById('btn-config-model');
+  btnTrain.disabled = !isEnable
 }
 
 function toggleLoaderConfigParameter(isToShow){

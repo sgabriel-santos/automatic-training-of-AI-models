@@ -7,6 +7,12 @@ body {
     margin: 1rem;
 }
 
+.content-model-name {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
 
 code {
     font-family: "Courier New", Courier, monospace;

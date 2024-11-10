@@ -11,8 +11,73 @@ html, body {
     height: 100vh;
 }
 
+nav {
+    /* display: none !important; */
+}
+
 main {
     display: flex;
     flex-direction: column;
     height: calc(100vh - 56px);
+}
+
+#container-steps {
+    margin: 50px auto;
+    text-align: center;
+    position: relative;
+}
+
+#container-steps #progress {
+    overflow: hidden;
+    counter-reset: step;
+}
+
+#container-steps #progress li {
+    list-style-type: none;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 12px;
+    float: left;
+    width: 25%;
+    position: relative;
+}
+
+#container-steps #progress li:before {
+    content: counter(step);
+    counter-increment: step;
+    width: 20px;
+    display: block;
+    line-height: 20px;
+    background: white;
+    color: #333;
+    border-radius: 10px;
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+
+    margin: 0 auto;
+}
+
+#container-steps #progress li::after {
+    content: '';
+    width: 100%;
+    background: white;
+    height: 2px;
+    position: absolute;
+    top: 9px;
+    left: -50%;
+    z-index: -1;
+}
+
+#container-steps #progress li:first-child:after {
+    content: none;
+}
+
+#container-steps #progress li.active:before, #container-steps #progress li.active:after {
+    background: #5350C4;
+    color: white;
+    text-shadow: 0 1px 0;
+}
+
+ul {
+    margin-bottom: 0 !important;
 }

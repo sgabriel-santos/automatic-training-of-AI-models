@@ -4,19 +4,30 @@
 
 {% block content %}
 <script src="{{ url_for('static', path='/scripts/form.js') }}"></script>
+<div id="container-steps">
+  <ul id="progress">
+    <li class="active">Configuração do Modelo</li>
+    <li>Confirmação dos Parâmetros</li>
+    <li>Treinamento do Modelo</li>
+    <li>Treinamento Finalizado</li>
+  </ul>
+</div>
 <h4 class="title-page">Configurações para treinamento do modelo</h4>
 <div class="form">
   <form id="form" class="row g-3 align-items-center" onsubmit="submitForm(event)">
     <div class="col-12">
       <label for="inputState" class="form-label">Modelo para treinamento</label>
-      <select id="inputState" class="form-select" name="model_name">
-        <option value="image_classification" selected>Image Classification (Sequencial Model Keras)</option>
-        <option value="XCeption">XCeption</option>
-        <option value="VGG19">VGG19</option>
-        <option value="ResNet50">ResNet50</option>
-        <option value="MobileNet">MobileNet</option>
-        <option value="InceptionV3">InceptionV3</option>
-      </select>
+      <div class="content-model-name">
+        <select id="inputState" class="form-select" name="model_name">
+          <option value="image_classification" selected>Image Classification (Sequencial Model Keras)</option>
+          <option value="XCeption">XCeption</option>
+          <option value="VGG19">VGG19</option>
+          <option value="ResNet50">ResNet50</option>
+          <option value="MobileNet">MobileNet</option>
+          <option value="InceptionV3">InceptionV3</option>
+        </select>
+        <span class="material-symbols-outlined">info</span>
+      </div>
     </div>
     <div class="col-3">
       <label for="inp-epochs" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Épocas</label>
@@ -61,7 +72,7 @@
       <input type="file" id="valDataset" name="file_validation" required accept=".zip">
   </div>
     <div class="col-12">
-      <button id="btn-fit-model" type="submit" class="btn btn-primary" disabled>Treinar Modelo</button>
+      <button id="btn-config-model" type="submit" class="btn btn-primary" disabled>Configurar Modelo</button>
     </div>
   </form>
   <div id="loader-model-train" class="display-none">

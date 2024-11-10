@@ -3,13 +3,25 @@
 {% block title %}Logs{% endblock %}
 
 {% block content %}
+<div id="container-steps">
+    <ul id="progress">
+        <li class="active">Configuração do Modelo</li>
+        <li class="active">Confirmação dos Parâmetros</li>
+        <li class="active">Treinamento do Modelo</li>
+        <li>Treinamento Finalizado</li>
+    </ul>
+</div>
 <h4 class="title-page">Logs</h4>
 <div id="code-block">
     <form action="/reset-logs">
         <button id="clean-log" type="submit"><i class="bi bi-eraser"></i>Limpar Logs</button>
     </form>
     <pre id="log-content"><code id="python-code" class="language-python">{{ function_code }}</code></pre>
+    <a href="/test_model" id="btn-test-model">
+        Analisar Modelo e realizar testes
+    </a>
 </div>
+
 
 <script>
     // Função para carregar os logs através de uma requisição AJAX

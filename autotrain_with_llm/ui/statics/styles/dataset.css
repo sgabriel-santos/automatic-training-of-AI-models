@@ -21,8 +21,8 @@
 }
 
 .gallery-items{
-    width: 240px;
-    height: 240px;
+    width: 200px;
+    height: 200px;
     border: 10px solid #FFF;
     box-shadow: 5px 5px 5px #0006;
     flex-grow: 1;

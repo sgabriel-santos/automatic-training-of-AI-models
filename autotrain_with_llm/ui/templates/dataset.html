@@ -4,9 +4,18 @@
 
 {% block content %}
 <script src="{{ url_for('static', path='/scripts/dataset.js') }}"></script>
+<div id="container-steps">
+  <ul id="progress">
+    <li class="active">Configuração do Modelo</li>
+    <li class="active">Confirmação dos Parâmetros</li>
+    <li>Treinamento do Modelo</li>
+    <li>Treinamento Finalizado</li>
+  </ul>
+</div>
+
 <div class="config-content">
   <div>
-    <h3>Configuração atual do modelo</h3>
+    <h4>Configuração atual do modelo</h4>
     <div id="model_config">
       <div class="parameter">
         <span class="model_name_label"><b>Modelo Selecionado:</b></span>
