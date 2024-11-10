@@ -35,6 +35,7 @@ class Managermodel:
     classes = []
     
     is_absolute_path: bool = None
+    ready_parameters = False
     
     model_used: ImageClassification | None = None
     
@@ -121,6 +122,7 @@ class Managermodel:
                 
             self.__copy_directory(data['train_dataset_path'], self.TRAINING_DIR)
             self.__copy_directory(data['valid_dataset_path'], self.TEST_DIR)
+            self.ready_parameters = True
     
     
     def is_training_model(self) -> bool:

@@ -1,6 +1,7 @@
 let imageList;
 let url;
 let classes = [];
+let objCategoryImages;
 
 const configParameters = async () => {
     let modelConfig = await sendRequestToAPI("/model_config", "GET")
@@ -54,16 +55,6 @@ const configDataset = async () => {
         `
 
         tabContents.appendChild(newContent)
-
-        imageCategories.forEach(fileName => {
-            let galleryContainer = document.querySelector(`#${currentClass} .gallery-container`)
-            let a = document.createElement('a')
-            a.href = "#chick-hicks"
-            a.classList.add("gallery-items")
-            a.innerHTML = `<img src="${url._url}${fileName}" alt="${fileName}"></img>`
-        
-            galleryContainer.appendChild(a) 
-        })
     });
 
     const currentActiveTab = document.querySelector('.tab-btn.active');
@@ -73,9 +64,25 @@ const configDataset = async () => {
     tabs.forEach(t => t.addEventListener('click', () => tabClicked(t)));
 }
 
+const fitModel = async () => {
+    const btnFitModel = document.getElementById('btn-fit-model')
+    btnFitModel.addEventListener("click", async () => {
+        let response = await sendRequestToAPI("/fit_model", "POST")
+
+        if (!response.ok) {
+            const error = await response.json();
+            alert(`Error: ${error.detail}`);
+            return;
+        }
+
+        window.location.href = "/logs_screen"
+    })
+}
+
 document.addEventListener('DOMContentLoaded', async () => {
     await configParameters()
     await configDataset()
+    await fitModel()
 })
 
 const tabClicked = (tab) => {
@@ -90,4 +97,14 @@ const tabClicked = (tab) => {
     const content = document.getElementById(contentId);
 
     content.classList.add('show');
+
+    let imageList = objCategoryImages[contentId.replace('_', ' ')]
+    imageList.forEach(fileName => {
+        let galleryContainer = document.querySelector(`#${contentId} .gallery-container`)
+        let a = document.createElement('a')
+        a.classList.add("gallery-items")
+        a.innerHTML = `<img src="${url._url}${fileName}" alt="${fileName}"></img>`
+    
+        galleryContainer.appendChild(a) 
+    })
 }

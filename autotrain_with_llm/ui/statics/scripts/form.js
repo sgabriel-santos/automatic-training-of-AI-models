@@ -12,7 +12,7 @@ async function submitForm(event) {
       toggleFitButton(false)
       toggleLoaderConfigParameter(true)
 
-      const response = await fetch('/fit_model', {
+      const response = await fetch('/configure_model', {
           method: 'POST',
           body: formData
       });
@@ -26,7 +26,7 @@ async function submitForm(event) {
       }
 
       toggleLoaderConfigParameter(false)
-      toggleLoaderTraining(true)
+      window.location.href = "/dataset";
     } catch (error) {
         console.error('Error submitting form:', error);
         alert('Error submitting form');

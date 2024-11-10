@@ -9,6 +9,7 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    margin: 10px;
 }
 
 .gallery-container{
@@ -80,4 +81,14 @@
 
 .tab-contents{
     overflow: auto;
+}
+
+#btn-fit-model{
+    margin: 10px;
+    padding: 10px;
+    border-radius: 50px;
+    width: 25vw;
+    background-color: #5350C4;
+    color: white;
+    border: none;
 }

@@ -8,9 +8,8 @@ import sys
 
 router = APIRouter(tags=["training_model"])
 
-@router.post('/fit_model', response_class=HTMLResponse)
-async def fit_model(
-    background_tasks: BackgroundTasks,
+@router.post('/configure_model', response_class=HTMLResponse)
+async def configure_model(
     model_name: str = Form(...),
     epochs: int = Form(...),
     shuffle: bool = Form(...),
@@ -59,9 +58,23 @@ async def fit_model(
             detail=f"Error building parameters: {str(e)}"  
         )
 
+    return RedirectResponse(url='/', status_code=status.HTTP_200_OK)
+
+
+@router.post('/fit_model')
+async def fit_model(
+    background_tasks: BackgroundTasks,  
+):
+    manager_model = Managermodel()
+    if not manager_model.ready_parameters:
+        raise HTTPException(
+            status_code=status.HTTP_412_PRECONDITION_FAILED,
+            detail="Os Parâmetros de configuração do modelo não foram configurados"
+        )
+        
     sys.stdout = utils_log.stdout_buffer
     background_tasks.add_task(manager_model.fit_model, utils_llm.generate_text_model_to_llm_in_file)
-    return RedirectResponse(url='/', status_code=status.HTTP_200_OK)
+    return True
 
 
 @router.post("/predict")
