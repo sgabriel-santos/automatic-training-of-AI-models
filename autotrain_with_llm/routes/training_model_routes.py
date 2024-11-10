@@ -51,6 +51,7 @@ async def configure_model(
             'valid_dataset_path': valid_dataset_path
         }
         manager_model.set_parameters_to_training_model(data)
+        utils_llm.generate_text_model_to_llm_in_file(1)
     
     except Exception as e:
         raise HTTPException(

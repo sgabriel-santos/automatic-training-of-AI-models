@@ -33,6 +33,7 @@ class Managermodel:
     batch_size = None
     im_shape = (250,250)
     classes = []
+    number_of_file_per_class = {}
     
     is_absolute_path: bool = None
     ready_parameters = False
@@ -89,15 +90,16 @@ class Managermodel:
         self.is_absolute_path = data['is_absolute_path']
         
         if not self.is_absolute_path:
-            if(data['file_training'].filename): self.classes = self.__save_files(data['file_training'], 'train')
-            if(data['file_validation'].filename): 
-                if self.__save_files(data['file_validation'], 'test') != self.classes:
+            if(data['file_training'].filename): self.classes, number_of_train_images_per_class = self.__save_files(data['file_training'], 'train')
+            if(data['file_validation'].filename):
+                current_class, number_of_valid_images_per_class = self.__save_files(data['file_validation'], 'test')
+                if current_class != self.classes:
                     raise HTTPException(
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
                     )
         else:
-            is_valid_directory, current_class = self.__is_valid_directory_structure(data['train_dataset_path'])
+            is_valid_directory, current_class, number_of_train_images_per_class = self.__is_valid_directory_structure(data['train_dataset_path'])
             
             if not is_valid_directory:
                 raise HTTPException(
@@ -106,7 +108,7 @@ class Managermodel:
                 )
                 
             self.classes = current_class
-            is_valid_directory, current_class = self.__is_valid_directory_structure(data['valid_dataset_path'])
+            is_valid_directory, current_class, number_of_valid_images_per_class = self.__is_valid_directory_structure(data['valid_dataset_path'])
             
             if not is_valid_directory:
                 raise HTTPException(
@@ -122,8 +124,15 @@ class Managermodel:
                 
             self.__copy_directory(data['train_dataset_path'], self.TRAINING_DIR)
             self.__copy_directory(data['valid_dataset_path'], self.TEST_DIR)
-            self.ready_parameters = True
-    
+        
+        self.ready_parameters = True
+        self.number_of_file_per_class = {}
+        
+        for current_class in self.classes:
+            self.number_of_file_per_class[current_class] = {}
+            self.number_of_file_per_class[current_class]['treinamento'] = number_of_train_images_per_class[current_class]
+            self.number_of_file_per_class[current_class]['validação'] = number_of_valid_images_per_class[current_class]
+
     
     def is_training_model(self) -> bool:
         """
@@ -141,7 +150,7 @@ class Managermodel:
         
     def fit_model(self, generate_text_model_to_llm_in_file):
         self.__update_training_model(True)
-        generate_text_model_to_llm_in_file(1)
+        generate_text_model_to_llm_in_file(2)
         try:
             print('Iniciando fluxo de treinamento do modelo')
             if not exists_directory(self.TRAINING_DIR):
@@ -180,7 +189,7 @@ class Managermodel:
             raise
             
         self.__update_training_model(False)
-        generate_text_model_to_llm_in_file(2)
+        generate_text_model_to_llm_in_file(3)
         
         
     def predict(self, image) -> dict | None:
@@ -268,7 +277,7 @@ class Managermodel:
         with zipfile.ZipFile(temp_zip_path, 'r') as zip_ref:
             zip_ref.extractall(extract_dir)
             
-        is_valid_directory, classes = self.__is_valid_directory_structure(extract_dir)
+        is_valid_directory, classes, numberOfImages = self.__is_valid_directory_structure(extract_dir)
 
         if not is_valid_directory:
             mode = "treinamento" if prefix_path == 'train' else "teste"
@@ -279,7 +288,7 @@ class Managermodel:
         
         # Remove o arquivo zip temporário
         os.remove(temp_zip_path)
-        return classes
+        return classes, numberOfImages
     
     def __copy_directory(self, source, destination):
         """
@@ -328,15 +337,17 @@ class Managermodel:
             )
     
         classes = []
+        number_of_imges_per_class = {}
         for root, dirs, files in os.walk(base_dir):
             # Certifique-se de que existem subdiretórios no     diretório base
             if root == base_dir and not dirs:
-                return False
+                return False, [], {}
             
             # Certifique-se de que cada subdiretório contém imagens
             for dir_name in dirs:
                 classes.append(dir_name)
                 dir_path = os.path.join(root, dir_name)
+                number_of_imges_per_class[dir_name] = len(os.listdir(dir_path))
                 if not any(file.lower().endswith(('.png', '.jpg', '.jpeg')) for file in os.listdir(dir_path)):
-                    return False, []
-        return True, classes
+                    return False, [], {}
+        return True, classes, number_of_imges_per_class
