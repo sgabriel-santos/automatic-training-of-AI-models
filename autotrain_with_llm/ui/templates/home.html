@@ -3,50 +3,32 @@
 {% block title %}Detalhes da Ferramenta{% endblock %}
 
 {% block content %}
-
 <div class="home-content">
-  <div class="tool-details-text">
-    <span>Esta é uma ferramenta no code para o treinamento e análise de modelos de classificação de imagens.</span>
-    <span>O sistema possui um assistente virtual inteligente integrado para que você possa tirar suas dúvidas a respeito do treinamento</span>
+  <div class="home-description">
+    <div class="differentials">
+      <div class="tag-differential nocode">No Code</div>
+      <div class="tag-differential assistant">Assistente Virtual Inteligente</div>
+    </div>
+    <div class="tool-details-text">
+      <span class="main-text">Sua ferramenta ideal para análise e treinamento de modelos de imagem</span>
+      <span class="secundary-text">Treine e analise os modelos de classificação da suas imagens e conte com uma assistente virtual inteligente integrada para tirar suas dúvidas.</span>
+    </div>
+    
+    <button class="btn-create-new-model">
+      Criar um novo modelo
+    </button>
   </div>
-
-  <a href="/form" class="btn-create-new-model">
-    Criar um novo modelo
-  </a>
+  <img src="{{ url_for('static', path='images/home_image.png') }}" alt="Matriz Confusão", style="width: 50%; height: auto;">
 </div>
 
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     let nav = document.querySelector("nav")
     nav.style.display = 'none'
+
+    const btnNewModel = document.querySelector(".btn-create-new-model")
+    btnNewModel.addEventListener("click", () => window.location.href="/form")
   })
 </script>
-
-<style>
-  .home-content {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    height: 100%;
-    width: 60vw;
-    align-self: center;
-  }
-  
-  .tool-details-text span{
-    text-align: center;
-    display: block;
-  }
-
-  .btn-create-new-model {
-    margin-top: 30px;
-    padding: 15px;
-    border-radius: 10px;
-    background-color: #5350C4;
-    color: white;
-    border: none;
-    text-decoration: none;
-  }
-</style>
 
 {% endblock %}

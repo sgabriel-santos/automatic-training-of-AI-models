@@ -31,3 +31,56 @@ i {
     margin-top: 4vh;
     display: none;
 }
+
+.home-content {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 90vw;
+    align-self: center;
+}
+
+.tool-details-text span{
+    display: block;
+}
+
+.btn-create-new-model {
+    margin-top: 30px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #5350C4;
+    color: white;
+    border: none;
+    text-decoration: none;
+}
+
+.differentials {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    justify-content: stretch;
+    gap: 10px;
+}
+
+.tag-differential {
+    padding: 8px 16px;
+    border-radius: 24px;
+    font-size: 12px;
+}
+
+.nocode {
+    background: #FFED9E;
+    color: #DB6E00;
+}
+
+.assistant {
+    background: #F0DBFF;
+    color: #9F1FF4;
+}
+
+span.main-text {
+    font-size: 60px;
+    font-family: "Inter", sans-serif;
+    font-weight: 700;
+}
