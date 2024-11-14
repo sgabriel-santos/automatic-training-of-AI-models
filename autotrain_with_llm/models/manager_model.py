@@ -34,6 +34,7 @@ class Managermodel:
     im_shape = (250,250)
     classes = []
     number_of_file_per_class = {}
+    step = 0
     
     is_absolute_path: bool = None
     ready_parameters = False
@@ -150,7 +151,7 @@ class Managermodel:
         
     def fit_model(self, generate_text_model_to_llm_in_file):
         self.__update_training_model(True)
-        generate_text_model_to_llm_in_file(2)
+        generate_text_model_to_llm_in_file(3)
         try:
             print('Iniciando fluxo de treinamento do modelo')
             if not exists_directory(self.TRAINING_DIR):
@@ -189,7 +190,7 @@ class Managermodel:
             raise
             
         self.__update_training_model(False)
-        generate_text_model_to_llm_in_file(3)
+        generate_text_model_to_llm_in_file(4)
         
         
     def predict(self, image) -> dict | None:

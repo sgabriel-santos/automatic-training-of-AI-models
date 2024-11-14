@@ -3,7 +3,6 @@ from autotrain_with_llm.models.manager_model import Managermodel
 from logging import error
 from groq import Groq
 import textwrap
-import json
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -14,16 +13,20 @@ def build_status_and_result_model(manager_model: Managermodel, step: int):
     if step == -1:
         status_model = "O treinamento do modelo foi iniciado, porém apresentou uma falha durante o treinamento"
         result_model = f"O modelo apresentou o seguinte erro: {manager_model.error}"
-        
+    
     if step == 1:
+        status_model = "Os parâmetros do modelo e o dataset está em processo de configuração"
+        result_model = "A configuração dos parâmetros e do dataset do modelo está sendo configurado"
+        
+    if step == 2:
         status_model = "Os parâmetros do modelo foram configurados, porém o treinamento ainda não foi iniciado pelo usuário"
         result_model = "O modelo está pronto para ser treinado"
     
-    if step == 2:
+    if step == 3:
         status_model = "O modelo está em processo de treinamento"
         result_model = "O resultado do modelo será exibido somente após o final do treinamento"
     
-    if step == 3:
+    if step == 4:
         status_model = "O treinamento do modelo foi concluído"
         result_model = f"""
             Após o treinamento, as métricas de desempenho do modelo foram as seguintes:
@@ -71,9 +74,10 @@ def generate_text_model_to_llm_in_file(step: int = 1) -> None:
     ----------
         step (int): Indica a etapa ao qual o treinamento do modelo se encontra. As possíveis etapas são:
             0 -> O usuário ainda não inciou o treinamento de um modelo
-            1 -> O usuário já configurou os parâmetros do modelo, mas ainda não iniciou o treinamento
-            2 -> O usuário iniciou o treinamento do modelo e ele se encontra em processo de treinamento
-            3 -> O modelo já finalizou o treinamento e está pronto para ser testado
+            1 -> Os parâmetros do modelo está sendo configurado
+            2 -> O usuário já configurou os parâmetros do modelo, mas ainda não iniciou o treinamento
+            3 -> O usuário iniciou o treinamento do modelo e ele se encontra em processo de treinamento
+            4 -> O modelo já finalizou o treinamento e está pronto para ser testado
             -1 -> O usuário iniciou o treinamento do modelo, porém o mesmo apresentou um erro durante o treinamento
             
     Retorno:
@@ -105,6 +109,7 @@ def generate_text_model_to_llm_in_file(step: int = 1) -> None:
         else: 
             text = build_model_configuration_text(step)
         file.write(textwrap.dedent(text))
+        Managermodel().step = step
     
 def get_text_model_to_llm():
     try:

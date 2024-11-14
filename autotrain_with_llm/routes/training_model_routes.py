@@ -3,8 +3,10 @@ from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
 from autotrain_with_llm.models.manager_model import Managermodel
 from autotrain_with_llm.middleware import utils_log, utils_llm
-import os
 import sys
+import os
+import zipfile
+import shutil
 
 router = APIRouter(tags=["training_model"])
 
@@ -29,6 +31,7 @@ async def configure_model(
             detail=f"Há um modelo em processo de treinamento"  
         )
     
+    utils_llm.generate_text_model_to_llm_in_file(1)
     found_model = manager_model.set_model_to_be_used(model_name)
 
     if not found_model:
@@ -51,7 +54,7 @@ async def configure_model(
             'valid_dataset_path': valid_dataset_path
         }
         manager_model.set_parameters_to_training_model(data)
-        utils_llm.generate_text_model_to_llm_in_file(1)
+        utils_llm.generate_text_model_to_llm_in_file(2)
     
     except Exception as e:
         raise HTTPException(
@@ -97,9 +100,6 @@ async def download_model():
         return FileResponse(file_path, filename="model.keras")
     return {"error": "File not found"}
 
-import os
-import zipfile
-import shutil
 
 @router.post("/upload-zip")
 async def upload_zip(file: UploadFile = File(...)):

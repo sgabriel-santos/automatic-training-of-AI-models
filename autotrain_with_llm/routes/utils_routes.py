@@ -14,6 +14,10 @@ router = APIRouter(tags=["utils"])
 async def training_model():
     return Managermodel().is_training_model()
 
+@router.get('/step')
+async def get_step():
+    return Managermodel().step
+
 @router.get('/model_config')
 async def get_model_config():
     return Managermodel().get_model_config()

@@ -17,35 +17,11 @@
         <button id="clean-log" type="submit"><i class="bi bi-eraser"></i>Limpar Logs</button>
     </form>
     <pre id="log-content"><code id="python-code" class="language-python">{{ function_code }}</code></pre>
-    <a href="/test_model" id="btn-test-model">
-        Analisar Modelo e realizar testes
-    </a>
+    <form action="/test_model">
+        <button disabled type="submit" id="btn-test-model" class="btn btn-primary">
+            Analisar Modelo e realizar testes
+        </button>
+    </form>
 </div>
-
-
-<script>
-    // Função para carregar os logs através de uma requisição AJAX
-    function loadLogs() {
-        let xhr = new XMLHttpRequest();
-        xhr.open("GET", "/logs");
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                let code_block_el = document.getElementById("log-content")
-                code_block_el.innerText = xhr.responseText;
-                code_block_el.scrollTop = code_block_el.scrollHeight;
-            }
-        };
-        xhr.send();
-    }
-
-    // Carregar os logs quando a página é carregada
-    window.onload = function () {
-        loadLogs();
-        // Recarregar os logs a cada 5 segundos
-        setInterval(function () {
-            loadLogs();
-        }, 1000);
-    };
-
-</script>
+<script src="{{ url_for('static', path='/scripts/logs.js') }}"></script>
 {% endblock %}
