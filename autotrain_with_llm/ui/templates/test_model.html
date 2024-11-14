@@ -3,7 +3,6 @@
 {% block title %}Código Fonte{% endblock %}
 
 {% block content %}
-<script src="{{ url_for('static', path='/scripts/test_model.js') }}"></script>
 <div id="container-steps">
   <ul id="progress">
     <li class="active">Configuração do Modelo</li>
@@ -40,4 +39,6 @@
     <span class="sr-only">Preparando o download do modelo...</span>
   </div>
 </div>
+<script src="{{ url_for('static', path='/scripts/test_model.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', path='styles/test_model.css') }}">
 {% endblock %}

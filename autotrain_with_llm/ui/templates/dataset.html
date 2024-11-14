@@ -3,7 +3,6 @@
 {% block title %}Configurações para treinamento do modelo{% endblock %}
 
 {% block content %}
-<script src="{{ url_for('static', path='/scripts/dataset.js') }}"></script>
 <div id="container-steps">
   <ul id="progress">
     <li class="active">Configuração do Modelo</li>
@@ -51,12 +50,7 @@
     Iniciar treinamento do Modelo
   </button>
 </div>
-
-
-
-
-
-
-<!-- <div class="gallery-container"> -->
-</div>        
+<!-- <div class="gallery-container"></div> -->
+<script src="{{ url_for('static', path='/scripts/dataset.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', path='styles/dataset.css') }}">        
 {% endblock %}

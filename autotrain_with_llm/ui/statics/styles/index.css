@@ -15,11 +15,25 @@ nav {
     display: none !important;
 }
 
+.title-page {
+    text-align: center;
+    margin: 1rem;
+}
+
 main {
     display: flex;
     flex-direction: column;
     height: 100vh;
 }
+
+code {
+    font-family: "Courier New", Courier, monospace;
+}
+
+i {
+    margin-right: 0.2vw;
+}
+
 
 #container-steps {
     margin: 50px auto;
