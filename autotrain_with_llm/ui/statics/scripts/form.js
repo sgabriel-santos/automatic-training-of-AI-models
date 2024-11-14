@@ -66,6 +66,28 @@ document.addEventListener('DOMContentLoaded', async (event) => {
   });
 
 
+  const sourceCodeIcon = document.querySelector('.source-code-icon')
+  const sourceCodeDialog = document.querySelector('.source-code-dialog')
+
+  sourceCodeIcon.addEventListener('click', async () => {
+    sourceCodeDialog.showModal()
+    const select = document.querySelector('select')
+    const response = await sendRequestToAPI(`source_code_by_model_name?model_name=${select.value}`, 'GET')
+    const sourceCode = await response.json()
+    console.log(sourceCode)
+
+    const panelCode = document.getElementById('python-code')
+    panelCode.innerHTML = sourceCode
+
+    hljs.highlightBlock(panelCode);
+    hljs.highlightAll();
+
+    const modelName = document.querySelector('.model-name') 
+    modelName.innerHTML = select.options[select.selectedIndex].text
+
+  })
+
+
 
   const response = await fetch('/is_training_model', {
     method: 'GET',

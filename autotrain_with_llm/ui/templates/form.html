@@ -4,6 +4,7 @@
 
 {% block content %}
 <script src="{{ url_for('static', path='/scripts/form.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', path='styles/form.css') }}">
 <div id="container-steps">
   <ul id="progress">
     <li class="active">Configuração do Modelo</li>
@@ -26,7 +27,7 @@
           <option value="MobileNet">MobileNet</option>
           <option value="InceptionV3">InceptionV3</option>
         </select>
-        <span class="material-symbols-outlined">info</span>
+        <img class="source-code-icon" src="{{ url_for('static', path='images/source_code_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
       </div>
     </div>
     <div class="col-3">
@@ -85,4 +86,11 @@
     <span class="sr-only">Preparando o ambiente para iniciar o treinamento</span>
   </div>
 </div>
+<dialog class="source-code-dialog" style="inset-area: center;">
+  <h3>Código Fonte</h3>
+  <span class="model-name"></span>
+  <pre class="source-code-panel"><code id="python-code" class="language-python"></code></pre>
+</dialog>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
 {% endblock %}

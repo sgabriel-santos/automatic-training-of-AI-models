@@ -1,7 +1,9 @@
 from fastapi import APIRouter, Request
 from autotrain_with_llm.models.manager_model import Managermodel
+from autotrain_with_llm.models.models import name_to_model
 from fastapi import HTTPException, status
 from typing import Dict, List
+import inspect
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
@@ -58,6 +60,14 @@ async def get_image_paths():
 async def get_image_url(request: Request):
     image_url = request.url_for('static', path='images/training_files/train/')
     return image_url
+
+
+@router.get('/source_code_by_model_name')
+async def source_code_by_model_name(request: Request, model_name: str):
+    if model_name not in name_to_model:
+        return "Modelo não encontrado"
+    return inspect.getsource(name_to_model[model_name].fit_model)
+
 
 @router.post('/verify_library/{package_name}')
 async def verify_library(package_name: str):

@@ -1,0 +1,22 @@
+dialog.source-code-dialog {
+    border: none;
+    padding: 20px;
+    border-radius: 10px;
+    width: 60%;
+    height: 80%;
+    overflow: hidden;
+}
+
+pre {
+    display: block;
+    margin-top: 0;
+    margin-bottom: 1rem;
+    overflow: auto;
+    font-size: .875em;
+    height: 90%;
+}
+
+code {
+    height: 100%;
+    overflow: auto;
+}
