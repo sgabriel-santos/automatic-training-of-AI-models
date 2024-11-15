@@ -4,7 +4,9 @@
 
 {% block content %}
 <script src="{{ url_for('static', path='/scripts/form.js') }}"></script>
+<script src="{{ url_for('static', path='/scripts/drag_drop_input_file.js') }}"></script>
 <link rel="stylesheet" href="{{ url_for('static', path='styles/form.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', path='styles/drag_drop_input_file.css') }}">
 <div id="container-steps">
   <ul id="progress">
     <li class="active">Configuração do Modelo</li>
@@ -56,8 +58,8 @@
       <div class="content-model-name">
         <select id="select-dataset-configuration" class="form-select" name="configuration-mode">
           <option value="absolute-path-section" selected>Caminho absoluto</option>
-          <option value="create-classes-section">criar classes manualmente</option>
           <option value="dataset-upload-section">Upload de Dataset</option>
+          <option value="create-classes-section">Criar classes manualmente</option>
         </select>
       </div>
     </div>
@@ -73,11 +75,34 @@
 
   <!-- Input para upload de arquivos -->
   <div id="dataset-upload-section" class="section-config-mode" style="display:none;">
-      <label for="trainDataset">Upload Dataset de Treinamento:</label>
-      <input type="file" id="train-dataset-upload-section" class="set-to-not-required" name="file_training" required accept=".zip">
-      <br>
-      <label for="valDataset">Upload Dataset de Validação:</label>
-      <input type="file" id="valid-dataset-upload-section" class="set-to-not-required" name="file_validation" required accept=".zip">
+    <div class="train-section">
+        <label for="trainDataset"><strong>Upload Dataset de Treinamento:</strong></label>
+        <label for="file" class="file-input">
+          <div class="drop-zone" id="drop-zone">
+            <img class="source-code-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+            <p>Arraste o arquivo aqui.</p>
+            <p>ou</p>
+            <p class="choose-file">Escolher arquivo</p>
+            <p class="format-available">Formato .zip</p>
+          </div>
+          <input class="input-file" type="file" id="train-dataset-upload-section set-to-not-required" name="file_training"/>
+        </label>
+    </div>
+    
+    <div class="valid-section">
+      <label for="valDataset"><strong>Upload Dataset de Validação:</strong></label>
+      <label for="file" class="file-input">
+        <div class="drop-zone" id="drop-zone">
+          <img class="source-code-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+          <p>Arraste o arquivo aqui.</p>
+          <p>ou</p>
+          <p class="choose-file">Escolher arquivo</p>
+          <p class="format-available">Formato .zip</p>
+        </div>
+        <input class="input-file set-to-not-required" type="file" id="vaid-dataset-upload-section" name="file_validation"/>
+      </label>
+    </div>
+      
   </div>
     <div class="col-12">
       <button id="btn-config-model" type="submit" class="btn btn-primary" disabled>Configurar Modelo</button>

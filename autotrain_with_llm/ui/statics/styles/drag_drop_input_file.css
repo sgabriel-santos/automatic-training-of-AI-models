@@ -1,0 +1,78 @@
+.file-input > * {
+    grid-area: stack;;
+}
+
+.file-input{
+    /* width: 450px;
+    height: 200px; */
+    background-color:#FCFCFC;
+    display: grid;
+    grid-template-areas: "stack";
+    border-radius: 8px;
+}
+
+.file-input > input {
+    opacity: 0;
+    /* display: none; */
+}
+
+.file-input > .drop-zone {
+    /* margin: 12px; */
+    border: dashed 1px #B6C1CA;
+    border-radius: 4px;
+    padding: 20px 0;
+    min-width: 350px;
+    height: 180px;
+}
+
+.file-input.active > .drop-zone {
+    /* margin: 14px; */
+    background-color: #E0EDFF;
+    /* height: 180px;
+    width: 100%; */
+}
+
+.file-input.ready > .drop-zone {
+    background-color: #E0EDFF;
+}
+
+.drop-zone {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    transition: background 200ms;
+    position: relative;
+}
+
+.drop-zone p {
+    /* z-index: 99;
+    text-shadow: rgba(18, 18, 18, 0.5) 1px 0 20px; */
+    margin: 0;
+}
+
+/* .drop-zone img {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    z-index: 0;
+    opacity: 0.8;
+    transition: opacity 500ms;
+    object-fit: cover;
+} */
+
+/* .file-input:hover .drop-zone > img {
+    opacity: 0.1;
+} */
+
+p.choose-file {
+    text-decoration: underline;
+    color: #3348FF;
+    margin-top: 9px;
+}
+
+p.format-available {
+    color: #49515B;
+    font-size: 11px;
+    margin-top: 4px;
+}

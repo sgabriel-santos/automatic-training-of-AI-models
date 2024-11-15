@@ -41,7 +41,7 @@ const changeDatasetConfigMode = () => {
 
       
       const currentSection = document.getElementById(selectedConfigurationModel.value)
-      currentSection.style.display = 'block'
+      currentSection.style.display = selectedConfigurationModel.value == 'dataset-upload-section' ? 'flex' : 'block'
       
       const currentTrainMode = document.getElementById(`train-${selectedConfigurationModel.value}`)
       const currentvalidMode = document.getElementById(`valid-${selectedConfigurationModel.value}`)
