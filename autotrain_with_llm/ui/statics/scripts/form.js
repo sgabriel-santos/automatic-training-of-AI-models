@@ -4,8 +4,8 @@ async function submitForm(event) {
     const formData = new FormData(form);
 
     formData.set('shuffle', formData.get('shuffle') ? 'true' : 'false');
-    const checkbox = document.getElementById('useAbsolutePathCheckbox');
-    const isAbsolutePath = checkbox.checked
+    const selectMode = document.getElementById('select-dataset-configuration');
+    const isAbsolutePath = selectMode.value == 'absolute-path-section'? true: false;
     formData.set('is_absolute_path', isAbsolutePath)
 
     try {
@@ -33,39 +33,24 @@ async function submitForm(event) {
     }
 }
 
-document.addEventListener('DOMContentLoaded', async (event) => {
-  // Função para alternar entre input de caminho absoluto e upload de arquivo
-  const checkbox = document.getElementById('useAbsolutePathCheckbox');
-  const absolutePathSection = document.getElementById('absolutePathSection');
-  const fileUploadSection = document.getElementById('fileUploadSection');
-  
-  const trainDataset = document.getElementById('trainDataset');
-  const valDataset = document.getElementById('valDataset');
-  const trainDatasetPath = document.getElementById('trainDatasetPath');
-  const valDatasetPath = document.getElementById('valDatasetPath');
+const changeDatasetConfigMode = () => {
+  const selectedConfigurationModel = document.getElementById('select-dataset-configuration');
+  selectedConfigurationModel.addEventListener('change', function() {
+      document.querySelectorAll('.section-config-mode').forEach(el => el.style.display = 'none')
+      document.querySelectorAll('.set-to-not-required').forEach(el => el.required = false)
 
-  checkbox.addEventListener('change', function() {
-      if (checkbox.checked) {
-        absolutePathSection.style.display = 'block';
-        fileUploadSection.style.display = 'none';
-        trainDataset.required = false;
-        valDataset.required = false;
-
-        trainDatasetPath.required = true;
-        valDatasetPath.required = true;
-
-      } else {
-        absolutePathSection.style.display = 'none';
-        fileUploadSection.style.display = 'block';
-        trainDatasetPath.required = false;
-        valDatasetPath.required = false;
-
-        trainDataset.required = true;
-        valDataset.required = true;
-      }
+      
+      const currentSection = document.getElementById(selectedConfigurationModel.value)
+      currentSection.style.display = 'block'
+      
+      const currentTrainMode = document.getElementById(`train-${selectedConfigurationModel.value}`)
+      const currentvalidMode = document.getElementById(`valid-${selectedConfigurationModel.value}`)
+      currentTrainMode.required = true
+      currentvalidMode.required = true
   });
+}
 
-
+const configSourceCodeDialog = () => {
   const sourceCodeIcon = document.querySelector('.source-code-icon')
   const sourceCodeDialog = document.querySelector('.source-code-dialog')
 
@@ -74,7 +59,6 @@ document.addEventListener('DOMContentLoaded', async (event) => {
     const select = document.querySelector('select')
     const response = await sendRequestToAPI(`source_code_by_model_name?model_name=${select.value}`, 'GET')
     const sourceCode = await response.json()
-    console.log(sourceCode)
 
     const panelCode = document.getElementById('python-code')
     panelCode.innerHTML = sourceCode
@@ -84,11 +68,10 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
     const modelName = document.querySelector('.model-name') 
     modelName.innerHTML = select.options[select.selectedIndex].text
-
   })
+}
 
-
-
+const verifyTrainingModel = async () => {
   const response = await fetch('/is_training_model', {
     method: 'GET',
     headers: {'Content-Type': 'application/json'}
@@ -99,6 +82,12 @@ document.addEventListener('DOMContentLoaded', async (event) => {
 
   toggleFitButton(!data)
   toggleLoaderTraining(data)
+}
+
+document.addEventListener('DOMContentLoaded', async (event) => {
+  changeDatasetConfigMode()
+  configSourceCodeDialog()
+  await verifyTrainingModel()
 });
 
 

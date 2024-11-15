@@ -40,3 +40,13 @@ span.main-text {
     font-family: "Inter", sans-serif;
     font-weight: 700;
 }
+
+.btn-create-new-model {
+    margin-top: 30px;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: #5350C4;
+    color: white;
+    border: none;
+    text-decoration: none;
+}

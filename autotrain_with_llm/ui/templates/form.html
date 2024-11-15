@@ -51,26 +51,33 @@
       </div>
     </div>
     <!-- Checkbox para escolher entre caminho ou upload -->
-    <label>
-      <input type="checkbox" id="useAbsolutePathCheckbox"> Utilizar caminho absoluto do dataset no servidor
-  </label>
+    <div class="col-6">
+      <label for="select-dataset-configuration" class="form-label">Configuração de dataset</label>
+      <div class="content-model-name">
+        <select id="select-dataset-configuration" class="form-select" name="configuration-mode">
+          <option value="absolute-path-section" selected>Caminho absoluto</option>
+          <option value="create-classes-section">criar classes manualmente</option>
+          <option value="dataset-upload-section">Upload de Dataset</option>
+        </select>
+      </div>
+    </div>
 
   <!-- Input para o caminho absoluto -->
-  <div id="absolutePathSection" style="display:none;">
+  <div id="absolute-path-section" class="section-config-mode">
       <label for="trainDatasetPath">Caminho do Dataset de Treinamento:</label>
-      <input type="text" id="trainDatasetPath" name="train_dataset_path" class="form-control" placeholder="Caminho absoluto do dataset de treinamento" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\train">
+      <input type="text" id="train-absolute-path-section" name="train_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de treinamento" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\train">
       <br>
       <label for="valDatasetPath">Caminho do Dataset de Validação:</label>
-      <input type="text" id="valDatasetPath" name="valid_dataset_path" class="form-control" placeholder="Caminho absoluto do dataset de validação" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\test">
+      <input type="text" id="valid-absolute-path-section" name="valid_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de validação" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\test">
   </div>
 
   <!-- Input para upload de arquivos -->
-  <div id="fileUploadSection">
+  <div id="dataset-upload-section" class="section-config-mode" style="display:none;">
       <label for="trainDataset">Upload Dataset de Treinamento:</label>
-      <input type="file" id="trainDataset" name="file_training" required accept=".zip">
+      <input type="file" id="train-dataset-upload-section" class="set-to-not-required" name="file_training" required accept=".zip">
       <br>
       <label for="valDataset">Upload Dataset de Validação:</label>
-      <input type="file" id="valDataset" name="file_validation" required accept=".zip">
+      <input type="file" id="valid-dataset-upload-section" class="set-to-not-required" name="file_validation" required accept=".zip">
   </div>
     <div class="col-12">
       <button id="btn-config-model" type="submit" class="btn btn-primary" disabled>Configurar Modelo</button>
