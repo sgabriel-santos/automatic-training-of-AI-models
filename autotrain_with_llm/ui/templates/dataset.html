@@ -39,17 +39,51 @@
       </div>
     </div>
   </div>
-  <div id="container">
-    <div class="tab-buttons">
+  <div class="container">
+    <span><strong>Dataset de treinamento</strong></span>
+    <div class="training-dataset">
+      <!-- Card de imagem com evento de clique para abrir o diálogo -->
+      <!-- <div class="image-card" onclick="openDialog(this)">
+        <div class="image-wrapper">
+            <img src="" alt="Imagem de Glioma">
+            <span class="badge">2190</span>
+        </div>
+        <div class="caption">Glioma</div>
+      </div> -->
     </div>
-  
-    <div class="tab-contents">
+    <span><strong>Dataset de Validação</strong></span>
+    <div class="validation-dataset">
+      <!-- Conteúdo gerado via javascript -->
     </div>
-  </div>
+</div>
 
-  <button id="btn-fit-model">
-    Iniciar treinamento do Modelo
-  </button>
+<!-- Diálogo com a galeria de imagens -->
+<dialog id="image-dialog">
+    <div class="dialog-header">
+        <!-- Botão de voltar e título dinâmico -->
+        <h2>
+            <button class="back-button" onclick="closeDialog()">&#8592;</button>
+            <span id="dialog-title">Title</span>
+        </h2>
+        <!-- Quantidade de imagens encontrada, preenchida dinamicamente -->
+        <p class="image-count" id="image-count">Image Count</p>
+    </div>
+    <!-- Botão de fechar no canto superior direito -->
+    <button class="close-button" onclick="closeDialog()">×</button>
+
+    <div class="image-grid">
+      <!-- <img src="" alt="Imagem de tumor"> -->
+    </div>
+  </dialog>
+  <div class="btns-states">
+    <button id="btn-previous" class="btn btn-primary">
+      Configurar parâmetros novamente
+    </button>
+  
+    <button id="btn-fit-model" class="btn btn-primary">
+      Iniciar treinamento do Modelo
+    </button>
+  </div>
 </div>
 <!-- <div class="gallery-container"></div> -->
 <script src="{{ url_for('static', path='/scripts/dataset.js') }}"></script>

@@ -2,6 +2,9 @@
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    width: 80vw;
+    align-self: center;
+    gap: 15px;
 }
 
 #container{
@@ -75,20 +78,167 @@
 
 #model_config {
     display: flex;
-    flex-direction: column;
-    padding: 10px;
+    /* padding: 10px; */
+    gap: 15px;
+    flex-wrap: wrap;
 }
 
 .tab-contents{
     overflow: auto;
 }
 
-#btn-fit-model{
-    margin: 10px;
-    padding: 10px;
-    border-radius: 50px;
-    width: 25vw;
-    background-color: #5350C4;
-    color: white;
+.btns-states {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-start;
+}
+
+button#btn-previous {
+    background-color: white;
+    border: solid 1px #DCE0E5;
+    color: black;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s ease;
+  }
+
+  button#btn-previous:hover {
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.2);
+  }
+
+/* album */
+
+.training-dataset, .validation-dataset{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* Container principal */
+.container {
+    display: flex;
+    /* justify-content: center; */
+    /* align-items: center; */
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 0;
+    flex-direction: column;
+    padding: 0;
+}
+
+/* Estilo dos cards de imagem */
+.image-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 150px;
+    cursor: pointer;
+}
+
+.image-card img {
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* Estilo do badge no canto superior direito */
+.badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background-color: #E0EDFF;
+    color: #2196F3;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 5px;
+    padding: 2px 6px;
+}
+
+/* Legenda abaixo da imagem */
+.caption {
+    margin-top: 8px;
+    font-size: 14px;
+    font-weight: bold;
+    text-align: center;
+}
+
+/* Posicionamento do badge no container */
+.image-wrapper {
+    position: relative;
+    width: 100%;
+    height: auto;
+}
+
+/* Estilização do diálogo */
+dialog {
+    width: 80%;
+    max-width: 900px;
+    height: 70vh;
     border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    position: relative;
+    font-family: Arial, sans-serif;
+    align-self: center;
+    justify-self: center;
+    overflow: hidden;
+}
+
+/* Cabeçalho do diálogo */
+.dialog-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+/* Título */
+.dialog-header h2 {
+    font-size: 20px;
+    font-weight: bold;
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Label de quantidade de imagens */
+.dialog-header .image-count {
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+/* Botão de fechar */
+.close-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    position: absolute;
+    top: 15px;
+    right: 15px;
+}
+
+/* Botão de voltar */
+.back-button {
+    background: none;
+    border: none;
+    font-size: 18px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+/* Grade de imagens no diálogo */
+.image-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 10px;
+    overflow: auto;
+    height: 85%;
+}
+
+.image-grid img {
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }

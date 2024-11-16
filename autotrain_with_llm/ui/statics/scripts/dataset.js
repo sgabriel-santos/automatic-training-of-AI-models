@@ -3,6 +3,16 @@ let url;
 let classes = [];
 let objCategoryImages;
 
+let trainingDataset;
+let validationDataset;
+
+document.addEventListener('DOMContentLoaded', async () => {
+    await configParameters()
+    await configDataset()
+    await fitModel()
+    await previousState()
+})
+
 const configParameters = async () => {
     let modelConfig = await sendRequestToAPI("/model_config", "GET")
     modelConfig = await modelConfig.json()
@@ -21,47 +31,46 @@ const configParameters = async () => {
     shuffle.textContent = modelConfig['shuffle'] || ''
 }
 
+const imageCatogoryTemplate = (category, imagePath, amountImages) => {
+    return `
+        <div class="image-card" onclick="openDialog(this)">
+            <div class="image-wrapper">
+                <img src="${imagePath}" alt="Imagem de exemplo da categoria ${category}">
+                <span class="badge">${amountImages}</span>
+            </div>
+            <div class="caption">${category}</div>
+        </div>
+    `
+}
+
 const configDataset = async () => {
     let response = await sendRequestToAPI("/images", "GET")
     objCategoryImages = await response.json()
 
     let urlEndpoint = await sendRequestToAPI("api/image-url", "GET")
     url = await urlEndpoint.json()
-    let isFirst = true
 
-    Object.keys(objCategoryImages).forEach(category => {
-        let imageCategories = objCategoryImages[category]
-        let currentClass = category.replace(' ', '_')
-        classes.push(currentClass)
+    trainingDataset = objCategoryImages['train']
+    validationDataset = objCategoryImages['valid']
 
-        let tabButtons = document.querySelector('.tab-buttons')
-        let newButton = document.createElement('button')
-        if(isFirst) newButton.classList.add('tab-btn', 'active')
-        else newButton.classList.add('tab-btn')
-        isFirst = false
-        newButton.setAttribute('content-id', currentClass)
-        newButton.textContent = category
+    Object.keys(trainingDataset).forEach(category => {
+        let amountImages = trainingDataset[category].length
+        let firstImage = trainingDataset[category][0]
+        const newDiv = document.createElement('div')
+        newDiv.classList.add('training')
+        newDiv.innerHTML = imageCatogoryTemplate(category, `${url.train._url}${firstImage}`, amountImages)
+        document.querySelector('.training-dataset').appendChild(newDiv)
+    })
 
-        tabButtons.appendChild(newButton)
+    Object.keys(validationDataset).forEach(category => {
+        let amountImages = validationDataset[category].length
+        let firstImage = validationDataset[category][0]
 
-        let tabContents = document.querySelector('.tab-contents')
-        let newContent = document.createElement('div')
-        newContent.classList.add('content')
-        newContent.id = currentClass
-
-        newContent.innerHTML = `
-            <span>${imageCategories.length} imagens encontradas</span>
-            <div class="gallery-container"></div>     
-        `
-
-        tabContents.appendChild(newContent)
-    });
-
-    const currentActiveTab = document.querySelector('.tab-btn.active');
-    tabClicked(currentActiveTab); 
-    
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(t => t.addEventListener('click', () => tabClicked(t)));
+        const newDiv = document.createElement('div')
+        newDiv.classList.add('validation')
+        newDiv.innerHTML = imageCatogoryTemplate(category, `${url.valid._url}${firstImage}`, amountImages)
+        document.querySelector('.validation-dataset').appendChild(newDiv)
+    })
 }
 
 const fitModel = async () => {
@@ -79,32 +88,38 @@ const fitModel = async () => {
     })
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    await configParameters()
-    await configDataset()
-    await fitModel()
-})
-
-const tabClicked = (tab) => {
-    const tabs = document.querySelectorAll('.tab-btn');
-    tabs.forEach(t => t.classList.remove('active'));
-    tab.classList.add('active');
-
-    const contents = document.querySelectorAll('.content');
-    contents.forEach(content => content.classList.remove('show'));
-
-    const contentId = tab.getAttribute('content-id');
-    const content = document.getElementById(contentId);
-
-    content.classList.add('show');
-
-    let imageList = objCategoryImages[contentId.replace('_', ' ')]
-    imageList.forEach(fileName => {
-        let galleryContainer = document.querySelector(`#${contentId} .gallery-container`)
-        let a = document.createElement('a')
-        a.classList.add("gallery-items")
-        a.innerHTML = `<img src="${url._url}${fileName}" alt="${fileName}"></img>`
-    
-        galleryContainer.appendChild(a) 
-    })
+const previousState = async () => {
+    const previouState = document.getElementById('btn-previous')
+    previouState.addEventListener('click', () => window.location.href = '/form')
 }
+
+const imageDialogTemplate = (imagePath) => {
+    const image = document.createElement('img')
+    image.src = imagePath
+    image.loading = 'lazy'
+    return image
+}
+
+function openDialog(cardElement) {
+    const parent = cardElement.parentElement
+    const datasetMode = parent.classList[0]
+    const title = cardElement.querySelector('.caption').textContent; // Obtém o nome da classe do card
+    const imageCount = cardElement.querySelector('.badge').textContent; // Obtém a contagem de imagens
+
+    const album = document.querySelector('.image-grid')
+    album.innerHTML = ""
+    if(datasetMode == 'training'){
+        const images = trainingDataset[title]
+        images.forEach(imagePath => album.appendChild(imageDialogTemplate(`${url.train._url}${imagePath}`)))
+    }else{
+        const images = validationDataset[title]
+        images.forEach(imagePath => album.appendChild(imageDialogTemplate(`${url.valid._url}${imagePath}`)))
+    }
+
+    document.getElementById('dialog-title').textContent = title; // Define o título do diálogo
+    document.getElementById('image-count').textContent = `${imageCount} Imagens encontradas`; // Define a contagem de imagens
+    document.getElementById('image-dialog').showModal();
+}
+
+// Função para fechar o diálogo
+const closeDialog = () => document.getElementById('image-dialog').close();

@@ -7,7 +7,8 @@ import inspect
 import os
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-IMAGES_DIR = os.path.join(BASE_DIR, "../ui/statics/images/training_files/train")
+IMAGES_TRAIN_DIR = os.path.join(BASE_DIR, "../ui/statics/images/training_files/train")
+IMAGES_VALID_DIR = os.path.join(BASE_DIR, "../ui/statics/images/training_files/test")
 
 router = APIRouter(tags=["utils"])
 
@@ -25,23 +26,36 @@ async def get_model_config():
     return Managermodel().get_model_config()
 
 
-@router.get("/images", response_model=Dict[str, List[str]])
+@router.get("/images")
 async def get_image_paths():
     """
     Retorna uma lista com os caminhos de todas as imagens armazenadas no diretório local.
     """
     # Verifica se o diretório existe
-    if not os.path.exists(IMAGES_DIR):
+    if not os.path.exists(IMAGES_TRAIN_DIR):
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Diretório não encontrado"
         )
+        
+    if not os.path.exists(IMAGES_VALID_DIR):
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail="Diretório não encontrado"
+        )
+    
+    images = {}    
+    images['train'] = get_images_by_path(IMAGES_TRAIN_DIR)
+    images['valid'] = get_images_by_path(IMAGES_VALID_DIR)
+    return images
+   
 
+def get_images_by_path(path):
     categories = {}
     
     # Percorre todos os diretórios e subdiretórios
-    for category_name in os.listdir(IMAGES_DIR):
-        category_path = os.path.join(IMAGES_DIR, category_name)
+    for category_name in os.listdir(path):
+        category_path = os.path.join(path, category_name)
         
         # Verifica se é um diretório (ou seja, uma "categoria")
         if os.path.isdir(category_path):
@@ -58,8 +72,9 @@ async def get_image_paths():
 
 @router.get("/api/image-url")
 async def get_image_url(request: Request):
-    image_url = request.url_for('static', path='images/training_files/train/')
-    return image_url
+    train_url = request.url_for('static', path='images/training_files/train/')
+    valid_url = request.url_for('static', path='images/training_files/test/')
+    return {'train': train_url, 'valid': valid_url}
 
 
 @router.get('/source_code_by_model_name')
