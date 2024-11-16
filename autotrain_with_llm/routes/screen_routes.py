@@ -36,8 +36,8 @@ async def dataset(request: Request):
     return templates.TemplateResponse("dataset.html", {"request": request, "name": "Dataset"})
 
 
-@router.get('/test_model')
-async def test_model_screen(request: Request):
+@router.get('/result_model')
+async def result_model_screen(request: Request):
     try:
         metrics = SaveFiles().get_metrics()
         if not metrics:
@@ -53,7 +53,7 @@ async def test_model_screen(request: Request):
         )
         
     return templates.TemplateResponse(
-        "test_model.html", 
+        "result_model.html", 
         {
             "request": request, 
             "validation_loss": f"{float(vl):.3f}", 
@@ -61,3 +61,7 @@ async def test_model_screen(request: Request):
             "test_loss": f"{float(tl):.3f}", 
             "test_accuracy": f"{float(ta) * 100:.2f}"
         })
+
+@router.get('/test_model')
+async def test_model(request: Request):
+    return templates.TemplateResponse("test_model.html", {"request": request, "name": "Dataset"})

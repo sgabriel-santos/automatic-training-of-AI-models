@@ -1,44 +1,70 @@
 {% extends "index.html" %}
 
-{% block title %}Código Fonte{% endblock %}
+{% block title %}Teste do modelo{% endblock %}
 
 {% block content %}
+
 <div id="container-steps">
   <ul id="progress">
     <li class="active">Configuração do Modelo</li>
     <li class="active">Confirmação dos Parâmetros</li>
     <li class="active">Treinamento do Modelo</li>
-    <li class="active">Treinamento Finalizado</li>
+    <li class="active">Resultado do Modelo</li>
+    <li class="active">Testes com o Modelo</li>
   </ul>
 </div>
-<div class="result-model">
-  <h3>Resultado do Modelo Treinado</h3>
-  <div class="loss-accuracy">
-    <span><b>Validation Loss:</b> {{validation_loss}} |</span>
-    <span><b>Validation Accuracy:</b> {{validation_accuracy}}%</span>
-    <br/>
-    <span><b>Test Loss:</b> {{test_loss}} |</span>
-    <span><b>Test Accuracy:</b> {{test_accuracy}}%</span>
+<h4 class="title-page">Testar modelo treinado</h4>
+<div class="test-container">
+  <div class="test-header">
+    <span><strong>Upload de imagem para teste</strong></span>
+    <form action="/">
+      <button type="submit" class="btn btn-primary">Treinar um novo modelo</button>
+    </form>
   </div>
-  <div class="graphs">
-    <img src="{{ url_for('static', path='images/confusion_matrix.png') }}" alt="Matriz Confusão", style="width: 35%; height: auto;">
-    <img src="{{ url_for('static', path='images/Training and validation Loss and Accuracy.png') }}" alt="Validation Loss e Accuracy", style="width: 40%; height: auto;">
+  <div class="test-result-container">
+    <div class="test-input-container">
+      <label for="file" class="file-input">
+        <div class="drop-zone" id="drop-zone">
+          <img class="source-code-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+          <p>Arraste o arquivo aqui.</p>
+          <p>ou</p>
+          <p class="choose-file">Escolher arquivo</p>
+          <p class="format-available">Formato JPG, PNG</p>
+        </div>
+        <input class="input-file" type="file" accept="image/png, image/jpeg, image/jpg" id="train-dataset-upload-section set-to-not-required" name="file_training"/>
+      </label>
+      <div class="btns">
+        <button id="download-model" class="btn btn-primary">Download Model</button>
+        <button id="test-model" class="btn btn-primary">Testar Modelo</button>
+      </div>
+    </div>
+    <div class="result-container">
+      <div class="compatibilidade">
+        <div id="bars">
+          <!-- <div class="title">Compatibilidade</div> -->
+          <!-- <div class="bar-container">
+            <div class="label" style="color: #008000;">Glioma</div>
+            <div class="bar">
+              <div class="bar-fill glioma" style="width: 20%;"></div>
+            </div>
+            <div class="percentage">25%</div>
+          </div> -->
+        </div> 
+      </div>
+      <div id="loader-test-model" class="display-none">
+        <div class="spinner-border" role="status"></div>
+        <span class="sr-only">Identificando categoria da imagem...</span>
+      </div>
+      <div id="loader-download-model" class="display-none">
+        <div class="spinner-border" role="status"></div>
+        <span class="sr-only">Preparando o download do modelo...</span>
+      </div>
+    </div>
   </div>
 </div>
-<div class="mb-3 col-5" style="margin: auto;">
-  <label for="formFile" class="form-label">Fazer upload do arquivo para teste do Modelo</label>
-  <input class="form-control" type="file" id="formFile">
-  <button id="test-model" class="btn btn-primary" style="margin-top: 2vh;" disabled>Testar modelo</button>
-  <button id="download-model" class="btn btn-primary" style="margin-top: 2vh;">Fazer Download do Modelo</button>
-  <div id="loader-test-model" class="display-none">
-    <div class="spinner-border" role="status"></div>
-    <span class="sr-only">Identificando categoria da imagem...</span>
-  </div>
-  <div id="loader-download-model" class="display-none">
-    <div class="spinner-border" role="status"></div>
-    <span class="sr-only">Preparando o download do modelo...</span>
-  </div>
-</div>
+<script src="{{ url_for('static', path='/scripts/drag_drop_input_file.js') }}"></script>
 <script src="{{ url_for('static', path='/scripts/test_model.js') }}"></script>
+<link rel="stylesheet" href="{{ url_for('static', path='styles/drag_drop_input_file.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='styles/test_model.css') }}">
+
 {% endblock %}

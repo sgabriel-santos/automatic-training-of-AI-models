@@ -6,7 +6,7 @@
 }
 
 .form {
-    width: 60vw;
+    width: 55vw;
     align-self: center;
 }
 
@@ -15,9 +15,15 @@
     display: none;
 }
 
+.tool-details-text {
+    display: flex;
+    flex-direction: column;
+}
+
 .tool-details-text span{
     display: block;
 }
+
 
 dialog.source-code-dialog {
     border: none;

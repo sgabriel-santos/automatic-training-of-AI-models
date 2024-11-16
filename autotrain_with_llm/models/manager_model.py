@@ -206,8 +206,14 @@ class Managermodel:
         predicted_class = np.argmax(predictions[0])
         
         classes = self.get_classes()
-
-        return {"predicted_class": classes[int(predicted_class)]}
+        probabilities = {classes[i]: f"{prob*100:.2f}%" for i, prob in enumerate(predictions[0])}
+        # Identificar a classe com maior probabilidade
+        predicted_class = np.argmax(predictions[0])
+        
+        return {
+            "predicted_class": classes[int(predicted_class)],
+            "class_probabilities": probabilities
+        }
     
 
     def get_classes(self) -> list[str]:

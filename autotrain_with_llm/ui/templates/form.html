@@ -12,7 +12,8 @@
     <li class="active">Configuração do Modelo</li>
     <li>Confirmação dos Parâmetros</li>
     <li>Treinamento do Modelo</li>
-    <li>Treinamento Finalizado</li>
+    <li>Resultado do Modelo</li>
+    <li>Testes com o Modelo</li>
   </ul>
 </div>
 <h4 class="title-page">Configurações para treinamento do modelo</h4>
@@ -85,7 +86,7 @@
             <p class="choose-file">Escolher arquivo</p>
             <p class="format-available">Formato .zip</p>
           </div>
-          <input class="input-file" type="file" id="train-dataset-upload-section set-to-not-required" name="file_training"/>
+          <input class="input-file" type="file" id="train-dataset-upload-section set-to-not-required" accept="application/x-zip-compressed" name="file_training"/>
         </label>
     </div>
     
@@ -99,7 +100,7 @@
           <p class="choose-file">Escolher arquivo</p>
           <p class="format-available">Formato .zip</p>
         </div>
-        <input class="input-file set-to-not-required" type="file" id="vaid-dataset-upload-section" name="file_validation"/>
+        <input class="input-file set-to-not-required" type="file" id="vaid-dataset-upload-section" accept="application/x-zip-compressed" name="file_validation"/>
       </label>
     </div>
       

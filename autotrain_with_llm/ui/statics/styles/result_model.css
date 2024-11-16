@@ -1,0 +1,14 @@
+.result-model{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.graphs{
+    display: flex;
+    justify-content: center;
+}
+
+.loss-accuracy{
+    margin: 10px;
+}
