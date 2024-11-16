@@ -12,7 +12,7 @@ html, body {
 }
 
 nav {
-    /* display: none !important; */
+    display: none !important;
 }
 
 .title-page {
