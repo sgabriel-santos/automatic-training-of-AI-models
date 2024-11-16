@@ -36,7 +36,7 @@ i {
 
 
 #container-steps {
-    margin: 50px auto;
+    margin: 35px auto;
     text-align: center;
     position: relative;
 }
@@ -59,16 +59,18 @@ i {
 #container-steps #progress li:before {
     content: counter(step);
     counter-increment: step;
-    width: 20px;
+    width: 30px;
+    height: 30px;
     display: block;
     line-height: 20px;
     background: white;
     color: #333;
     border-radius: 10px;
     -moz-border-radius: 10px;
-    -webkit-border-radius: 10px;
-
-    margin: 0 auto;
+    -webkit-border-radius: 50px;
+    margin: 0 auto 10px auto;
+    padding: 5px;
+    border: solid 1px #B6C1CA;
 }
 
 #container-steps #progress li::after {
@@ -77,7 +79,7 @@ i {
     background: white;
     height: 2px;
     position: absolute;
-    top: 9px;
+    top: 14px;
     left: -50%;
     z-index: -1;
 }
@@ -90,6 +92,7 @@ i {
     background: #5350C4;
     color: white;
     text-shadow: 0 1px 0;
+    border: none;
 }
 
 ul {
