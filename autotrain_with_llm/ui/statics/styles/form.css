@@ -24,6 +24,13 @@
     display: block;
 }
 
+.label-dataset-config{
+    text-align: start;
+    justify-content: flex-start;
+    display: flex;
+    gap: 5px;
+}
+
 
 dialog.source-code-dialog {
     border: none;
@@ -48,7 +55,7 @@ code {
     overflow: auto;
 }
 
-#dataset-upload-section{
+#upload-dataset{
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
@@ -58,4 +65,126 @@ code {
     /* width: 40%; */
     display: flex;
     flex-direction: column;
+}
+
+
+/* DATASET CONFIG DIALOG */
+
+#datasetDialog {
+    width: 60%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+#datasetDialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+#datasetDialog h2 {
+    margin-top: 0;
+    color: #333;
+}
+#datasetDialog p,
+#datasetDialog pre {
+    margin: 10px 0;
+    color: #555;
+}
+#openDatasetDialogButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+#openDatasetDialogButton:hover {
+    background-color: #0056b3;
+}
+#datasetDialog pre {
+    background: #eee;
+    padding: 10px;
+    border-radius: 5px;
+    overflow-x: auto;
+}
+#closeDatasetDialogButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+#closeDatasetDialogButton:hover {
+    background-color: #0056b3;
+}
+
+/* SOURCE CODE DIALOF */
+
+#codeDialog {
+    width: 70%;
+    max-height: 80%;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+    overflow: hidden;
+    position: relative;
+}
+
+#codeDialog::backdrop {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+#openCodeDialogButton {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    background-color: #4CAF50;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+#openCodeDialogButton:hover {
+    background-color: #45a049;
+}
+
+#closeCodeDialogButton {
+    margin-top: 20px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #007BFF;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+    float: right;
+}
+
+#closeCodeDialogButton:hover {
+    background-color: #0056b3;
+}
+
+h2 {
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+#sourceCode {
+    background: #1e1e1e;
+    color: #dcdcdc;
+    padding: 20px;
+    border-radius: 10px;
+    font-family: Consolas, monospace;
+    font-size: 14px;
+    overflow-y: auto;
+    max-height: 50vh; /* Limita a altura para rolagem */
+    line-height: 1.5;
 }

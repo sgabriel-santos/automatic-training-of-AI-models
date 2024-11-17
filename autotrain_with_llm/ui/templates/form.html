@@ -55,60 +55,67 @@
     </div>
     <!-- Checkbox para escolher entre caminho ou upload -->
     <div class="col-6">
-      <label for="select-dataset-configuration" class="form-label">Configuração de dataset</label>
+      <label for="select-dataset-configuration" class="form-label label-dataset-config">
+        Configuração de dataset
+        <span class="material-symbols-outlined" onclick="document.getElementById('datasetDialog').showModal()", style="cursor: pointer;">
+          help
+        </span>
+      </label>
       <div class="content-model-name">
         <select id="select-dataset-configuration" class="form-select" name="configuration-mode">
-          <option value="absolute-path-section" selected>Caminho absoluto</option>
-          <option value="dataset-upload-section">Upload de Dataset</option>
+          <option value="upload-dataset" selected>Upload de Dataset</option>
+          <option value="dataset-path">Caminho absoluto</option>
           <!-- <option value="create-classes-section">Criar classes manualmente</option> -->
         </select>
       </div>
     </div>
 
-  <!-- Input para o caminho absoluto -->
-  <div id="absolute-path-section" class="section-config-mode">
-      <label for="trainDatasetPath">Caminho do Dataset de Treinamento:</label>
-      <input type="text" id="train-absolute-path-section" name="train_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de treinamento" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\train">
-      <br>
-      <label for="valDatasetPath">Caminho do Dataset de Validação:</label>
-      <input type="text" id="valid-absolute-path-section" name="valid_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de validação" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\test">
-  </div>
-
-  <!-- Input para upload de arquivos -->
-  <div id="dataset-upload-section" class="section-config-mode" style="display:none;">
-    <div class="train-section">
-        <label for="trainDataset"><strong>Upload Dataset de Treinamento:</strong></label>
+    <!-- Input para upload de arquivos -->
+    <div id="upload-dataset" class="section-config-mode">
+      <div class="train-section">
+          <label for="trainDataset"><strong>Upload Dataset de Treinamento:</strong></label>
+          <label for="file" class="file-input">
+            <div class="drop-zone" id="drop-zone">
+              <img class="upload-file-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+              <p>Arraste o arquivo aqui.</p>
+              <p>ou</p>
+              <p class="choose-file">Escolher arquivo</p>
+              <p class="format-available">Formato .zip</p>
+            </div>
+            <input class="input-file" type="file" id="train-upload-dataset set-to-not-required" accept="application/x-zip-compressed" name="file_training"/>
+          </label>
+      </div>
+      
+      <div class="valid-section">
+        <label for="valDataset"><strong>Upload Dataset de Validação:</strong></label>
         <label for="file" class="file-input">
           <div class="drop-zone" id="drop-zone">
-            <img class="source-code-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+            <img class="upload-file-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
             <p>Arraste o arquivo aqui.</p>
             <p>ou</p>
             <p class="choose-file">Escolher arquivo</p>
             <p class="format-available">Formato .zip</p>
           </div>
-          <input class="input-file" type="file" id="train-dataset-upload-section set-to-not-required" accept="application/x-zip-compressed" name="file_training"/>
+          <input class="input-file set-to-not-required" type="file" id="vaid-upload-dataset" accept="application/x-zip-compressed" name="file_validation"/>
         </label>
+      </div>
     </div>
-    
-    <div class="valid-section">
-      <label for="valDataset"><strong>Upload Dataset de Validação:</strong></label>
-      <label for="file" class="file-input">
-        <div class="drop-zone" id="drop-zone">
-          <img class="source-code-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
-          <p>Arraste o arquivo aqui.</p>
-          <p>ou</p>
-          <p class="choose-file">Escolher arquivo</p>
-          <p class="format-available">Formato .zip</p>
-        </div>
-        <input class="input-file set-to-not-required" type="file" id="vaid-dataset-upload-section" accept="application/x-zip-compressed" name="file_validation"/>
-      </label>
+
+    <!-- Input para o caminho absoluto -->
+    <div id="dataset-path" class="section-config-mode" style="display:none;">
+        <label for="trainDatasetPath">Caminho do Dataset de Treinamento:</label>
+        <input type="text" id="train-dataset-path" name="train_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de treinamento" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\train">
+        <br>
+        <label for="valDatasetPath">Caminho do Dataset de Validação:</label>
+        <input type="text" id="valid-dataset-path" name="valid_dataset_path" class="form-control set-to-not-required" placeholder="Caminho absoluto do dataset de validação" value="C:\Development\Faculdade\TCC\Utilitários\Datasets\Tumores\test">
     </div>
-      
-  </div>
+
     <div class="col-12">
       <button id="btn-config-model" type="submit" class="btn btn-primary" disabled>Configurar Modelo</button>
     </div>
   </form>
+
+  <!-- LOADERS -->
   <div id="loader-model-train" class="display-none">
     <div class="spinner-border" role="status"></div>
     <span class="sr-only">O modelo está sendo treinado...</span>
@@ -119,11 +126,50 @@
     <span class="sr-only">Preparando o ambiente para iniciar o treinamento</span>
   </div>
 </div>
-<dialog class="source-code-dialog" style="inset-area: center;">
-  <h3>Código Fonte</h3>
-  <span class="model-name"></span>
-  <pre class="source-code-panel"><code id="python-code" class="language-python"></code></pre>
+
+<!-- DIALOG SOURCE CODE -->
+<dialog id="codeDialog">
+    <h2>Código Fonte</h2>
+    <h3 class="model-name"></h3>
+    <div id="sourceCode">
+      <pre class="source-code-panel"><code id="python-code" class="language-python"></code></pre>
+    </div>
+    <button id="closeCodeDialogButton" class="btn btn-primary" onclick="document.getElementById('codeDialog').close()">Fechar</button>
 </dialog>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
+
+<!-- DIALOG DATASET CONFIG -->
+<dialog id="datasetDialog">
+    <h2>Configuração do Dataset</h2>
+    <p>Há duas formas de realizar a configuração do dataset na ferramenta:</p>
+    <ol>
+        <li>
+            <strong>Upload do arquivo zip:</strong> 
+            <p>Faça o upload dos arquivos de treinamento e validação no formato .zip. Este arquivo deve conter a seguinte estrutura:</p>
+            <pre>
+/nome_do_dataset.zip
+├── /classe_1
+│   ├── imagem_001.jpg
+│   ├── imagem_002.jpg
+│   ├── imagem_003.jpg
+│   └── ...
+├── /classe_2
+│   ├── imagem_001.jpg
+│   ├── imagem_002.jpg
+│   ├── imagem_003.jpg
+│   └── ...
+└── /classe_N
+├── imagem_001.jpg
+├── imagem_002.jpg
+├── imagem_003.jpg
+└── ...
+            </pre>
+            <p>Cada subdiretório representa uma classe, contendo as imagens correspondentes.</p>
+        </li>
+        <li>
+            <strong>Caminho absoluto do dataset:</strong>
+            <p>Indique o caminho absoluto do dataset na máquina onde a ferramenta está rodando. A estrutura deve ser idêntica ao formato acima, mas não é necessário compactar o diretório em um arquivo zip. A ferramenta deve ter permissão de acesso ao diretório para copiá-lo para a localização adequada.</p>
+        </li>
+    </ol>
+    <button id="closeDatasetDialogButton" class="btn btn-primary" onclick="document.getElementById('datasetDialog').close()">Fechar</button>
+</dialog>
 {% endblock %}

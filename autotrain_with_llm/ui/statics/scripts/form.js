@@ -5,8 +5,7 @@ async function submitForm(event) {
 
     formData.set('shuffle', formData.get('shuffle') ? 'true' : 'false');
     const selectMode = document.getElementById('select-dataset-configuration');
-    const isAbsolutePath = selectMode.value == 'absolute-path-section'? true: false;
-    formData.set('is_absolute_path', isAbsolutePath)
+    formData.set('dataset_config_mode', selectMode.value)
 
     try {
       toggleFitButton(false)
@@ -26,6 +25,7 @@ async function submitForm(event) {
       }
 
       toggleLoaderConfigParameter(false)
+      toggleFitButton(true)
       window.location.href = "/dataset";
     } catch (error) {
         console.error('Error submitting form:', error);
@@ -41,7 +41,7 @@ const changeDatasetConfigMode = () => {
 
       
       const currentSection = document.getElementById(selectedConfigurationModel.value)
-      currentSection.style.display = selectedConfigurationModel.value == 'dataset-upload-section' ? 'flex' : 'block'
+      currentSection.style.display = selectedConfigurationModel.value == 'upload-dataset' ? 'flex' : 'block'
       
       const currentTrainMode = document.getElementById(`train-${selectedConfigurationModel.value}`)
       const currentvalidMode = document.getElementById(`valid-${selectedConfigurationModel.value}`)
@@ -52,19 +52,17 @@ const changeDatasetConfigMode = () => {
 
 const configSourceCodeDialog = () => {
   const sourceCodeIcon = document.querySelector('.source-code-icon')
-  const sourceCodeDialog = document.querySelector('.source-code-dialog')
+  const sourceCodeDialog = document.getElementById('codeDialog')
 
   sourceCodeIcon.addEventListener('click', async () => {
     sourceCodeDialog.showModal()
+    // sourceCodeDialog.focus()
     const select = document.querySelector('select')
     const response = await sendRequestToAPI(`source_code_by_model_name?model_name=${select.value}`, 'GET')
     const sourceCode = await response.json()
 
     const panelCode = document.getElementById('python-code')
     panelCode.innerHTML = sourceCode
-
-    hljs.highlightBlock(panelCode);
-    hljs.highlightAll();
 
     const modelName = document.querySelector('.model-name') 
     modelName.innerHTML = select.options[select.selectedIndex].text

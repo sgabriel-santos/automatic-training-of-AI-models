@@ -7,6 +7,12 @@
     gap: 15px;
 }
 
+#model_config {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 #container{
     flex: 1;
     overflow: hidden;
@@ -74,13 +80,6 @@
     background-color: #c7d2fe;
     border-radius: 0px 0px 8px 8px;
     padding: 16px;
-}
-
-#model_config {
-    display: flex;
-    /* padding: 10px; */
-    gap: 15px;
-    flex-wrap: wrap;
 }
 
 .tab-contents{

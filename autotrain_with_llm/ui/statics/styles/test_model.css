@@ -93,3 +93,58 @@
   .percentage {
     font-size: 14px;
   }
+
+
+  /* DIALOG CONFIRM */
+
+  dialog {
+    width: 400px;
+    padding: 20px;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff;
+}
+
+dialog h2 {
+    font-size: 20px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+dialog p {
+    font-size: 14px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+.button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.button.cancel {
+    background-color: #f1f1f1;
+    color: #333;
+}
+
+.button.cancel:hover {
+    background-color: #e5e5e5;
+}
+
+.button.continue {
+    background-color: #e63946;
+    color: #ffffff;
+}
+
+.button.continue:hover {
+    background-color: #d62828;
+}

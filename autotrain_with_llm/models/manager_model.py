@@ -36,7 +36,7 @@ class Managermodel:
     number_of_file_per_class = {}
     step = 0
     
-    is_absolute_path: bool = None
+    dataset_config_mode: str = None
     ready_parameters = False
     
     model_used: ImageClassification | None = None
@@ -88,9 +88,9 @@ class Managermodel:
         
         self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/train")
         self.TEST_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/test")
-        self.is_absolute_path = data['is_absolute_path']
+        self.dataset_config_mode = data['dataset_config_mode']
         
-        if not self.is_absolute_path:
+        if self.dataset_config_mode == 'upload-dataset':
             if(data['file_training'].filename): self.classes, number_of_train_images_per_class = self.__save_files(data['file_training'], 'train')
             if(data['file_validation'].filename):
                 current_class, number_of_valid_images_per_class = self.__save_files(data['file_validation'], 'test')
@@ -99,7 +99,7 @@ class Managermodel:
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
                         detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
                     )
-        else:
+        elif self.dataset_config_mode == 'dataset-path':
             is_valid_directory, current_class, number_of_train_images_per_class = self.__is_valid_directory_structure(data['train_dataset_path'])
             
             if not is_valid_directory:
@@ -119,12 +119,22 @@ class Managermodel:
                 
             if current_class != self.classes:
                 raise HTTPException(
-                        status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
-                    )
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
+                )
                 
             self.__copy_directory(data['train_dataset_path'], self.TRAINING_DIR)
             self.__copy_directory(data['valid_dataset_path'], self.TEST_DIR)
+        elif self.dataset_config_mode == 'manual-config':
+            raise HTTPException(
+                status_code=status.HTTP_501_NOT_IMPLEMENTED,
+                detail="Este modo de configuração está em desenvolvimento"
+            )
+        else:
+            raise HTTPException(
+                status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                detail="Este Modo de configuração não é valido"
+            )
         
         self.ready_parameters = True
         self.number_of_file_per_class = {}

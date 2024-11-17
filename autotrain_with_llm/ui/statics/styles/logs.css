@@ -1,3 +1,17 @@
+.config-content{
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    align-self: center;
+    gap: 15px;
+}
+
+#model_config {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
 #code-block {
     flex: 1;
     overflow: hidden;
@@ -31,15 +45,4 @@ pre {
     border-top-left-radius: 0px;
     margin-bottom: 1rem;
     overflow: auto;
-}
-
-#btn-test-model{
-    padding: 10px;
-    border-radius: 50px;
-    width: 25vw;
-    background-color: #5350C4;
-    color: white;
-    border: none;
-    text-decoration: none;
-    text-align: center;
 }

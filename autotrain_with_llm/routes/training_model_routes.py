@@ -3,6 +3,7 @@ from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
 from autotrain_with_llm.models.manager_model import Managermodel
 from autotrain_with_llm.middleware import utils_log, utils_llm
+from typing import Optional
 import sys
 import os
 import zipfile
@@ -17,12 +18,25 @@ async def configure_model(
     shuffle: bool = Form(...),
     seed: int = Form(...),
     batch_size: int = Form(...),
-    is_absolute_path: bool = Form(...),
-    train_dataset_path: str = Form(...),
-    valid_dataset_path: str = Form(...),
-    file_training: UploadFile = File(...),
-    file_validation: UploadFile = File(...)
+    dataset_config_mode: str = Form(...),
+    train_dataset_path: Optional[str] = Form(None),
+    valid_dataset_path: Optional[str] = Form(None),
+    file_training: Optional[UploadFile] = File(None),
+    file_validation: Optional[UploadFile] = File(None),
+    file_training_images: Optional[list[UploadFile]] = File(None),
+    file_valid_images: Optional[list[UploadFile]] = File(None)
 ):
+    """
+    Endpoint de configuração do modelo a ser treinado.
+    Aqui, os parâmetros de configração devem ser passados para que o ambiente seja preparado com os parâmetros e o dataset correto.
+    Posteriormente, o treinamento pode ser inicializado por meio do endpoint /fit_model
+    
+    Parameters:
+        - dataset_config_mode (str): Este parâmetro representa o modelo com o usuário deseja configurar o dataset. As opções disponíveis, são:
+            - upload-dataset: Informa que o usuário realizou a importação do dataset (formato .zip)
+            - dataset-path: Informa que o usuário deseja utilizar um dataset existente na máquina que a ferramenta está sendo executada
+            - manual-config: Método em processo de desenvolvimento
+    """
     manager_model = Managermodel()
     
     if manager_model.is_training_model():
@@ -47,7 +61,7 @@ async def configure_model(
             'shuffle': shuffle,
             'seed': seed,
             'batch_size': batch_size,
-            'is_absolute_path': is_absolute_path,
+            'dataset_config_mode': dataset_config_mode,
             'file_training': file_training,
             'file_validation': file_validation,
             'train_dataset_path': train_dataset_path,

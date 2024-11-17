@@ -43,8 +43,8 @@ class ImageClassification(ABC, SaveFiles):
         self.TRAINING_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/train")
         self.TEST_DIR = os.path.join(self.BASE_DIR, "../ui/statics/images/training_files/test")
         
-        self.is_absolute_path = data['is_absolute_path']
-        if self.is_absolute_path:
+        self.dataset_config_mode = data['dataset_config_mode']
+        if self.dataset_config_mode == 'dataset-path':
             self.TRAINING_DIR = data['train_dataset_path']
             self.TEST_DIR = data['valid_dataset_path']
             

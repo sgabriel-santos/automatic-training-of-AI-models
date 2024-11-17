@@ -98,3 +98,7 @@ i {
 ul {
     margin-bottom: 0 !important;
 }
+
+dialog {
+    inset-area: center;
+}
