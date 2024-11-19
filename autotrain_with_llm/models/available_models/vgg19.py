@@ -23,7 +23,7 @@ class VGG19Model(ImageClassification):
         base_model.summary()
         
         global_average_layer = GlobalAveragePooling2D()
-        prediction_layer = Dense(len(classes))
+        prediction_layer = Dense(len(classes), activation='softmax')
         
         inputs = Input(shape=(self.im_shape[0], self.im_shape[1], 3))
         x = data_augmentation(inputs)

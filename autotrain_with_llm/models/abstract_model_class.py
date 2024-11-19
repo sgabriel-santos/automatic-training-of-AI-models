@@ -5,6 +5,7 @@ from tf_keras.callbacks import History
 from tf_keras.models import load_model, Model
 from tf_keras.preprocessing.image import ImageDataGenerator
 from autotrain_with_llm.models.save_files_class import SaveFiles
+import math
 import os
 
 class ImageClassification(ABC, SaveFiles):
@@ -30,6 +31,7 @@ class ImageClassification(ABC, SaveFiles):
     precision = recall = f1 = None
     
     confusion_matrix_values = None
+    model_loaded = None
 
     
     def __init__(self): pass
@@ -51,7 +53,7 @@ class ImageClassification(ABC, SaveFiles):
     def get_or_build_train_generator(self):
         # Generator para parte train
         if self.train_generator: return self.train_generator
-        data_generator = ImageDataGenerator(rescale=1./250, validation_split=0.2)
+        data_generator = ImageDataGenerator(rescale=1./250)
         train_generator = data_generator.flow_from_directory(
             self.TRAINING_DIR, 
             target_size=self.im_shape, 
@@ -59,15 +61,15 @@ class ImageClassification(ABC, SaveFiles):
             seed=self.seed,
             class_mode='categorical', 
             batch_size=self.batch_size, 
-            subset="training"
         )
         self.train_generator = train_generator
+        print(f'Quantidade de imagens para treinamento: {train_generator.samples}')
         return train_generator
     
     def get_or_build_validation_generator(self):
         # Generator para parte validação
         if self.validation_generator: return self.validation_generator
-        val_data_generator = ImageDataGenerator(rescale=1./250, validation_split=0.2)
+        val_data_generator = ImageDataGenerator(rescale=1./250)
         validation_generator = val_data_generator.flow_from_directory(
             self.TEST_DIR, 
             target_size=self.im_shape, 
@@ -75,9 +77,9 @@ class ImageClassification(ABC, SaveFiles):
             seed=self.seed,
             class_mode='categorical', 
             batch_size=self.batch_size, 
-            subset="validation"
         )
         self.validation_generator = validation_generator
+        print(f'Quantidade de imagens para validação: {validation_generator.samples}')
         return validation_generator
     
     def get_or_build_test_generator(self):
@@ -102,10 +104,17 @@ class ImageClassification(ABC, SaveFiles):
         self.classes = classes
         self.save_classes(classes)
         return classes
+    
+    def get_loaded_model(self):
+        if self.model_loaded: return self.model_loaded
+        else:
+            self.model_loaded = load_model(self.MODEL_NAME_RESULT)
+            return self.model_loaded
                 
     def test_model(self, history: History):
         print('Iniciando carregamento do modelo para validações')
-        model = load_model(self.MODEL_NAME_RESULT)
+        model = self.get_loaded_model()
+        print('Modelo carregado')
 
         # Using the validation dataset
         validation_score = model.evaluate(self.get_or_build_validation_generator())
@@ -154,17 +163,22 @@ class ImageClassification(ABC, SaveFiles):
         #Training        
         history = model.fit(
             self.train_generator,
-            steps_per_epoch=nb_train_samples // self.batch_size,
+            steps_per_epoch=math.ceil(nb_train_samples / self.batch_size),
             epochs=self.epochs,
             validation_data=validation_generator,
             verbose = 1,
-            validation_steps=nb_validation_samples // self.batch_size
+            validation_steps=math.ceil(nb_validation_samples / self.batch_size)
         )
         
         print('Salvando Modelo')
-        os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
-        model.save(self.MODEL_NAME_RESULT)
-        print('Modelo Salvo com sucesso')
+        try:
+            os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
+            model.save(self.MODEL_NAME_RESULT)
+            print('Modelo Salvo com sucesso')
+        except:
+            print('Erro ao salvar o modelo. Isso impedirá que o download seja feita nas etapas seguintes')
+        
+        self.model_loaded = model
         return history
         
             

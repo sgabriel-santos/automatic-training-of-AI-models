@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from autotrain_with_llm.routes import log_routes, screen_routes, utils_routes, llm_routes, training_model_routes
+from autotrain_with_llm.middleware.utils_os import remove_file
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from autotrain_with_llm.middleware.utils_llm import generate_text_model_to_llm_in_file
@@ -10,6 +11,12 @@ import os
 async def lifespan(app: FastAPI):
     generate_text_model_to_llm_in_file(0)
     yield
+    
+    BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+    confusion_matrix = os.path.join(BASE_DIR, "ui/statics/images/confusion_matrix.png")
+    graphs = os.path.join(BASE_DIR, "ui/statics/images/Training and validation Loss and Accuracy.png")
+    remove_file(confusion_matrix)
+    remove_file(graphs)
 
 app = FastAPI(lifespan=lifespan)
 app.include_router(training_model_routes.router)

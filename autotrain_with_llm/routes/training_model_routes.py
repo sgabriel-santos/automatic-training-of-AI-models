@@ -24,7 +24,6 @@ async def configure_model(
     file_training: Optional[UploadFile] = File(None),
     file_validation: Optional[UploadFile] = File(None),
     file_training_images: Optional[list[UploadFile]] = File(None),
-    file_valid_images: Optional[list[UploadFile]] = File(None)
 ):
     """
     Endpoint de configuração do modelo a ser treinado.
@@ -33,9 +32,16 @@ async def configure_model(
     
     Parameters:
         - dataset_config_mode (str): Este parâmetro representa o modelo com o usuário deseja configurar o dataset. As opções disponíveis, são:
+            
             - upload-dataset: Informa que o usuário realizou a importação do dataset (formato .zip)
+                - Nesta opção, o dataset deverá ser passado pelo usuário através dos parâmetros file_training e file_validation
+            
             - dataset-path: Informa que o usuário deseja utilizar um dataset existente na máquina que a ferramenta está sendo executada
-            - manual-config: Método em processo de desenvolvimento
+                - Nesta opção, o caminho do dataset de treinamento e validação devem ser passados através dos parãmetros train_dataset_path e valid_dataset_path
+            
+            - manual-config: Informa que o usuário criou o dataset manualmente através de importações de imagens
+                - Nesta opção, as imagens do dataset devem ser passadas através do parâmetro file_training_images
+                - Um detalhe importanto, o nome da imagem deve conter inicialmente o nome da classe. Por exemplo, o arquivo com o nome classe1/image.png indica que a imagem é da classe 1
     """
     manager_model = Managermodel()
     
@@ -65,7 +71,8 @@ async def configure_model(
             'file_training': file_training,
             'file_validation': file_validation,
             'train_dataset_path': train_dataset_path,
-            'valid_dataset_path': valid_dataset_path
+            'valid_dataset_path': valid_dataset_path,
+            'file_training_images': file_training_images
         }
         manager_model.set_parameters_to_training_model(data)
         utils_llm.generate_text_model_to_llm_in_file(2)
@@ -97,11 +104,17 @@ async def fit_model(
 
 @router.post("/predict")
 async def predict(image: UploadFile = File(...)):
-    response = Managermodel().predict(image)
-    if not response:
+    if Managermodel().step != 4:
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
             detail="Must have completed training of a model"
+        )
+        
+    response = Managermodel().predict(image)
+    if not response:
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Ocorreu um erro ao realizar a predição da imagem"
         )
     return response
 

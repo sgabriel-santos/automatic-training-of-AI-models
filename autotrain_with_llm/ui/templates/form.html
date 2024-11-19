@@ -4,7 +4,7 @@
 
 {% block content %}
 <script src="{{ url_for('static', path='/scripts/form.js') }}"></script>
-<script src="{{ url_for('static', path='/scripts/drag_drop_input_file.js') }}"></script>
+<!-- <script src="{{ url_for('static', path='/scripts/drag_drop_input_file.js') }}"></script> -->
 <link rel="stylesheet" href="{{ url_for('static', path='styles/form.css') }}">
 <link rel="stylesheet" href="{{ url_for('static', path='styles/drag_drop_input_file.css') }}">
 <div id="container-steps">
@@ -20,7 +20,9 @@
 <div class="form">
   <form id="form" class="row g-3 align-items-center" onsubmit="submitForm(event)">
     <div class="col-12">
-      <label for="inputState" class="form-label">Modelo para treinamento</label>
+      <label for="inputState" class="form-label">
+        Modelo para treinamento
+      </label>
       <div class="content-model-name">
         <select id="inputState" class="form-select" name="model_name">
           <option value="image_classification" selected>Image Classification (Sequencial Model Keras)</option>
@@ -34,15 +36,21 @@
       </div>
     </div>
     <div class="col-3">
-      <label for="inp-epochs" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Épocas</label>
+      <label for="inp-epochs" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">
+        Épocas
+      </label>
       <input type="number" min="1" name="epochs" class="form-control" id="inp-epochs" placeholder="5" required>
     </div>
     <div class="col-3">
-      <label for="inp-seed" class="form-label" title="Define uma semente para a geração aleatória. Isso é útil para garantir que os dados sejam embaralhados da mesma maneira toda vez que o código for executado, permitindo reprodutibilidade.">Seed</label>
+      <label for="inp-seed" class="form-label" title="Define uma semente para a geração aleatória. Isso é útil para garantir que os dados sejam embaralhados da mesma maneira toda vez que o código for executado, permitindo reprodutibilidade.">
+        Seed
+      </label>
       <input type="number" min="1" name="seed" class="form-control" id="inp-seed" placeholder="10" required>
     </div>
     <div class="col-3">
-      <label for="inp-batch-size" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">Batch Size</label>
+      <label for="inp-batch-size" class="form-label" title="Quantidade de épocas a serem utilizadas no treinamento">
+        Batch Size
+      </label>
       <input type="number" min="1" name="batch_size" class="form-control" id="inp-batch-size" placeholder="10" required>
     </div>
     <div class="col-3">
@@ -53,25 +61,47 @@
         </label>
       </div>
     </div>
-    <!-- Checkbox para escolher entre caminho ou upload -->
+    <!-- Dropdown para escolher entre caminho ou upload -->
     <div class="col-6">
       <label for="select-dataset-configuration" class="form-label label-dataset-config">
         Configuração de dataset
-        <span class="material-symbols-outlined" onclick="document.getElementById('datasetDialog').showModal()", style="cursor: pointer;">
+        <span class="material-symbols-outlined" id="config-help" onclick="document.getElementById('datasetDialog').showModal()", style="cursor: pointer;">
           help
         </span>
       </label>
       <div class="content-model-name">
         <select id="select-dataset-configuration" class="form-select" name="configuration-mode">
-          <option value="upload-dataset" selected>Upload de Dataset</option>
+          <option value="manual-config" selected>Criar classes manualmente</option>
+          <option value="upload-dataset">Upload de Dataset</option>
           <option value="dataset-path">Caminho absoluto</option>
-          <!-- <option value="create-classes-section">Criar classes manualmente</option> -->
         </select>
       </div>
     </div>
+    <div class="col-6" style="margin-top: auto;">
+      <span id="btn-create-new-class" class="btn btn-secondary section-config-mode" onclick="openDialog()">Criar nova classe</span>  
+    </div>
+
+    <!-- Manual Config -->
+    <div id="manual-config" class="section-config-mode">
+      <div class="manual-section">
+        <span><strong>Classes</strong></span>
+        <div class="training-dataset">
+          <span>Crie uma nova classse para visualizá-la aqui</span>
+          <!-- Card de imagem com evento de clique para abrir o diálogo -->
+          <!-- <div class="image-card" onclick="openDialog(this)">
+            <div class="image-wrapper">
+                <img src="" alt="">
+                <span class="badge">Counter</span>
+            </div>
+            <div class="caption">Class Name</div>
+          </div> -->
+        </div>
+      </div>
+    </div>
+
 
     <!-- Input para upload de arquivos -->
-    <div id="upload-dataset" class="section-config-mode">
+    <div id="upload-dataset" class="section-config-mode" style="display:none;">
       <div class="train-section">
           <label for="trainDataset"><strong>Upload Dataset de Treinamento:</strong></label>
           <label for="file" class="file-input">
@@ -82,7 +112,7 @@
               <p class="choose-file">Escolher arquivo</p>
               <p class="format-available">Formato .zip</p>
             </div>
-            <input class="input-file" type="file" id="train-upload-dataset set-to-not-required" accept="application/x-zip-compressed" name="file_training"/>
+            <input class="input-file set-to-not-required" type="file" id="train-upload-dataset" accept="application/x-zip-compressed" name="file_training"/>
           </label>
       </div>
       
@@ -96,7 +126,7 @@
             <p class="choose-file">Escolher arquivo</p>
             <p class="format-available">Formato .zip</p>
           </div>
-          <input class="input-file set-to-not-required" type="file" id="vaid-upload-dataset" accept="application/x-zip-compressed" name="file_validation"/>
+          <input class="input-file set-to-not-required" type="file" id="valid-upload-dataset" accept="application/x-zip-compressed" name="file_validation"/>
         </label>
       </div>
     </div>
@@ -139,13 +169,25 @@
 
 <!-- DIALOG DATASET CONFIG -->
 <dialog id="datasetDialog">
-    <h2>Configuração do Dataset</h2>
-    <p>Há duas formas de realizar a configuração do dataset na ferramenta:</p>
+  <div class="dialog-header">
+    <!-- Botão de voltar e título dinâmico -->
+    <h2>
+        <button class="back-button" onclick="document.getElementById('datasetDialog').close()">&#8592;</button>
+        <span id="dialog-title">Configuração do Dataset</span>
+    </h2>
+    <!-- Quantidade de imagens encontrada, preenchida dinamicamente -->
+    <!-- <p class="image-count" id="image-count">Image Count</p> -->
+  </div>
+    <p>Há 3 formas de realizar a configuração do dataset na ferramenta:</p>
     <ol>
-        <li>
-            <strong>Upload do arquivo zip:</strong> 
-            <p>Faça o upload dos arquivos de treinamento e validação no formato .zip. Este arquivo deve conter a seguinte estrutura:</p>
-            <pre>
+      <li>
+        <strong>Configuração manual das classes:</strong>
+        <p>É possível configurar o dataset manualmente criando suas próprias classes e adicionando as imagens correspondentes. Essa opção é ideal caso você ainda não tenha um dataset pronto no formato necessário. Basta criar as classes diretamente na interface da ferramenta e fazer o upload das imagens de cada classe. Dessa forma, você terá o controle total sobre a organização dos dados que serão usados no treinamento do modelo.</p>
+      </li>
+      <li>
+        <strong>Upload do arquivo zip:</strong> 
+        <p>Faça o upload dos arquivos de treinamento e validação no formato .zip. Este arquivo deve conter a seguinte estrutura:</p>
+        <pre>
 /nome_do_dataset.zip
 ├── /classe_1
 │   ├── imagem_001.jpg
@@ -162,14 +204,79 @@
 ├── imagem_002.jpg
 ├── imagem_003.jpg
 └── ...
-            </pre>
-            <p>Cada subdiretório representa uma classe, contendo as imagens correspondentes.</p>
-        </li>
-        <li>
-            <strong>Caminho absoluto do dataset:</strong>
-            <p>Indique o caminho absoluto do dataset na máquina onde a ferramenta está rodando. A estrutura deve ser idêntica ao formato acima, mas não é necessário compactar o diretório em um arquivo zip. A ferramenta deve ter permissão de acesso ao diretório para copiá-lo para a localização adequada.</p>
-        </li>
+        </pre>
+        <p>Cada subdiretório representa uma classe, contendo as imagens correspondentes.</p>
+      </li>
+      <li>
+          <strong>Caminho absoluto do dataset:</strong>
+          <p>Indique o caminho absoluto do dataset na máquina onde a ferramenta está rodando. A estrutura deve ser idêntica ao formato acima, mas não é necessário compactar o diretório em um arquivo zip. A ferramenta deve ter permissão de acesso ao diretório para copiá-lo para a localização adequada.</p>
+      </li>
     </ol>
     <button id="closeDatasetDialogButton" class="btn btn-primary" onclick="document.getElementById('datasetDialog').close()">Fechar</button>
+</dialog>
+
+
+<!-- Manual Class Dialog -->
+
+<!-- Diálogo com a galeria de imagens -->
+<dialog id="image-dialog">
+  <div class="dialog-header">
+      <!-- Botão de voltar e título dinâmico -->
+      <h2>
+          <button class="back-button" onclick="closeDialog()">&#8592;</button>
+          <span id="dialog-title">Configurar Classe</span>
+      </h2>
+      <!-- Quantidade de imagens encontrada, preenchida dinamicamente -->
+      <!-- <p class="image-count" id="image-count">Image Count</p> -->
+  </div>
+  <!-- Botão de fechar no canto superior direito -->
+  <button class="close-button" onclick="closeDialog()">×</button>
+  <div class="dialog-content">
+    <div class="class-info">
+      <form class="row g-3 align-items-center" onsubmit="handleFormSubmit(event)">
+        <div class="col-5">
+          <label for="inp-epochs" class="form-label" title="Nome da classe a ser configurada">
+            Nome da Classe
+          </label>
+          <input type="text" name="class-name" class="inp-class-name form-control" required>
+        </div>
+        <div class="col-auto" style="margin-top: auto;">
+          <button id="btn-save-class" class="btn btn-primary" type="submit">Salvar</button>
+        </div>
+        <div class="col-auto" style="margin-top: auto;">
+          <button id="btn-delete-class" onclick="deleteClass()" class="btn btn-danger" type="button">Deletar Classe</button>
+        </div>
+        <div class="invalid-feedback">
+          É necessário salvar ao menos duas imagens da classe desejada
+        </div>
+      </form>
+    </div>
+    <div class="content-to-import">
+      <div class="input-content">
+        <label for="valDataset"><strong>Upload de imagens:</strong></label>
+          <label for="file" class="file-input">
+            <div class="drop-zone" id="drop-zone">
+              <img class="upload-file-icon" src="{{ url_for('static', path='images/upload_file_icon.png') }}" alt="Ícone de código fonte" style="margin-left: 2px;">
+              <p>Arraste o arquivo aqui.</p>
+              <p>ou</p>
+              <p class="choose-file">Escolher arquivo</p>
+              <p class="format-available">Formato JPG, PNG</p>
+            </div>
+            <input 
+              class="input-file set-to-not-required" type="file" id="upload-images" 
+              accept="image/png, image/jpeg, image/jpg" name="file_validation"
+              addToAlbumWithId="image-grid"
+              multiple
+            />
+          </label>
+      </div>
+      <div class="image-content">
+        <p class="image-count" id="image-count">Nenhuma imagem adicionada</p>
+        <div id="image-grid" class="image-grid">
+          <!-- <img src="" alt="Imagem de tumor"> -->
+        </div>
+      </div>
+    </div>
+  </div>
 </dialog>
 {% endblock %}

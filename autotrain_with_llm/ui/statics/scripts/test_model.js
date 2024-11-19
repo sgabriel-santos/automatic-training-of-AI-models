@@ -115,8 +115,10 @@ const clearInput = () => {
     drop.removeChild(drop.querySelector('img.imported-img'))
 }
 
-const buildResponse = (data) => {
+// Função para converter porcentagem para largura
+const percentageToWidth = (percentage) => parseFloat(percentage.replace('%', ''));
 
+const buildResponse = (data) => {
     // Elemento onde as barras serão adicionadas
     const barsContainer = document.getElementById('bars');
     barsContainer.innerHTML = ''
@@ -127,52 +129,55 @@ const buildResponse = (data) => {
 
     barsContainer.appendChild(compatibility)
 
-  // Função para converter porcentagem para largura
-  function percentageToWidth(percentage) {
-    return parseFloat(percentage.replace('%', ''));
-  }
+    // Montar o layout dinamicamente
+    Object.entries(data.class_probabilities).forEach(([className, probability]) => {
 
-  // Montar o layout dinamicamente
-  Object.entries(data.class_probabilities).forEach(([className, probability]) => {
+        // Criar o contêiner da barra
+        const barContainer = document.createElement('div');
+        barContainer.classList.add('bar-container');
 
-    // Criar o contêiner da barra
-    const barContainer = document.createElement('div');
-    barContainer.classList.add('bar-container');
+        // Rótulo da classe
+        const label = document.createElement('div');
+        label.classList.add('label');
+        label.textContent = className;
 
-    // Rótulo da classe
-    const label = document.createElement('div');
-    label.classList.add('label');
-    label.textContent = className;
+        // Barra de progresso
+        const bar = document.createElement('div');
+        bar.classList.add('bar');
 
-    // Barra de progresso
-    const bar = document.createElement('div');
-    bar.classList.add('bar');
+        const barFill = document.createElement('div');
+        barFill.classList.add('bar-fill');
+        barFill.style.width = `${percentageToWidth(probability)}%`;
 
-    const barFill = document.createElement('div');
-    barFill.classList.add('bar-fill');
-    barFill.style.width = `${percentageToWidth(probability)}%`;
+        // Adicionar preenchimento à barra
+        bar.appendChild(barFill);
 
-    // Adicionar preenchimento à barra
-    bar.appendChild(barFill);
+        // Porcentagem
+        const percentage = document.createElement('div');
+        percentage.classList.add('percentage');
+        percentage.textContent = probability;
 
-    // Porcentagem
-    const percentage = document.createElement('div');
-    percentage.classList.add('percentage');
-    percentage.textContent = probability;
+        // Montar o layout
+        
+        barContainer.appendChild(label);
+        barContainer.appendChild(bar);
+        barContainer.appendChild(percentage);
 
-    // Montar o layout
-    
-    barContainer.appendChild(label);
-    barContainer.appendChild(bar);
-    barContainer.appendChild(percentage);
+        // Adicionar ao contêiner principal
+        barsContainer.appendChild(barContainer);
+    });
+}
 
-    // Adicionar ao contêiner principal
-    barsContainer.appendChild(barContainer);
-  });
+const verifyStep = async () => {
+    response = await sendRequestToAPI("/step", "GET")
+    const step = await response.json()
+
+    if(step != 4) window.location.href = '/'
 }
 
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', async function() {
+    await verifyStep()
     const fileInput = document.querySelector('.input-file');
     const testButton = document.getElementById('test-model');
     const downloadModelButton = document.getElementById('download-model')

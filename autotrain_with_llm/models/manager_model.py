@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from autotrain_with_llm.models.models import name_to_model
 from autotrain_with_llm.models.abstract_model_class import ImageClassification
-from tf_keras.models import load_model
 from fastapi import UploadFile
 from autotrain_with_llm.middleware.utils_os import exists_directory
 import shutil
@@ -10,6 +9,8 @@ import os
 import numpy as np
 from PIL import Image
 import json
+import random
+from collections import defaultdict
 
 class Managermodel:
     """
@@ -97,7 +98,7 @@ class Managermodel:
                 if current_class != self.classes:
                     raise HTTPException(
                         status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                        detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
+                        detail="Os arquivos de treinamento e validação não possuem as mesmas classes"
                     )
         elif self.dataset_config_mode == 'dataset-path':
             is_valid_directory, current_class, number_of_train_images_per_class = self.__is_valid_directory_structure(data['train_dataset_path'])
@@ -114,22 +115,49 @@ class Managermodel:
             if not is_valid_directory:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail=f"O dataset de teste enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+                    detail=f"O dataset de validação enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
                 )
                 
             if current_class != self.classes:
                 raise HTTPException(
                     status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
-                    detail="Os arquivos de treinamento e teste não possuem as mesmas classes"
+                    detail="Os arquivos de treinamento e validação não possuem as mesmas classes"
                 )
                 
             self.__copy_directory(data['train_dataset_path'], self.TRAINING_DIR)
             self.__copy_directory(data['valid_dataset_path'], self.TEST_DIR)
+        
         elif self.dataset_config_mode == 'manual-config':
-            raise HTTPException(
-                status_code=status.HTTP_501_NOT_IMPLEMENTED,
-                detail="Este modo de configuração está em desenvolvimento"
-            )
+            if not data['file_training_images']:
+                raise HTTPException(
+                    status_code=status.HTTP_406_NOT_ACCEPTABLE,
+                    detail="Necessário que seja realizado a criação de classes para o treinamento"
+                )
+            
+            self.classes = list(set(file.filename.split('/')[0] for file in data['file_training_images']))
+            training_files, validation_files = self.split_files(data['file_training_images'])
+
+
+            self.__save_images(training_files, 'train')
+            self.__save_images(validation_files, 'test')
+            
+            is_valid_directory, current_class, number_of_train_images_per_class = self.__is_valid_directory_structure(self.TRAINING_DIR)
+            
+            if not is_valid_directory:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"O dataset de treinamento enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+                )
+                
+            self.classes = current_class
+            is_valid_directory, current_class, number_of_valid_images_per_class = self.__is_valid_directory_structure(self.TEST_DIR)
+            
+            if not is_valid_directory:
+                raise HTTPException(
+                    status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+                    detail=f"O dataset de validação enviado não é um arquivo válido. Certifque-se que o dataset possui uma arquitetura de pastas correta."
+                )
+                
         else:
             raise HTTPException(
                 status_code=status.HTTP_406_NOT_ACCEPTABLE,
@@ -138,12 +166,30 @@ class Managermodel:
         
         self.ready_parameters = True
         self.number_of_file_per_class = {}
-        
         for current_class in self.classes:
             self.number_of_file_per_class[current_class] = {}
             self.number_of_file_per_class[current_class]['treinamento'] = number_of_train_images_per_class[current_class]
             self.number_of_file_per_class[current_class]['validação'] = number_of_valid_images_per_class[current_class]
 
+    # Divisão dos arquivos em 80% para treino e 20% para teste
+    def split_files(self, file_list, train_ratio=0.8):
+         # Agrupar as imagens por classe
+        class_groups = defaultdict(list)
+        for file in file_list:
+            class_name, _ = file.filename.split('/', 1)  # Separar o nome da classe do resto do caminho
+            class_groups[class_name].append(file)
+
+        train_files = []
+        test_files = []
+
+        # Para cada classe, dividir os arquivos
+        for class_name, files in class_groups.items():
+            random.shuffle(files)  # Embaralhar os arquivos da classe
+            split_index = int(len(files) * train_ratio)  # Calcular índice de divisão
+            train_files.extend(files[:split_index])  # Adicionar arquivos de treino
+            test_files.extend(files[split_index:])  # Adicionar arquivos de teste
+
+        return train_files, test_files
     
     def is_training_model(self) -> bool:
         """
@@ -210,20 +256,24 @@ class Managermodel:
         Retorno:
             Dicionário contendo classe da imagem importada ou None caso o modelo ainda não tenha sido treinado
         """
-        model = load_model(self.MODEL_NAME_RESULT)
-        processed_image = self.__load_and_process_image(image.file)
-        predictions = model.predict(processed_image)
-        predicted_class = np.argmax(predictions[0])
-        
-        classes = self.get_classes()
-        probabilities = {classes[i]: f"{prob*100:.2f}%" for i, prob in enumerate(predictions[0])}
-        # Identificar a classe com maior probabilidade
-        predicted_class = np.argmax(predictions[0])
-        
-        return {
-            "predicted_class": classes[int(predicted_class)],
-            "class_probabilities": probabilities
-        }
+        try:
+            model = self.model_used.get_loaded_model()
+            processed_image = self.__load_and_process_image(image.file)
+            predictions = model.predict(processed_image)
+            predicted_class = np.argmax(predictions[0])
+            
+            classes = self.get_classes()
+            probabilities = {classes[i]: f"{prob*100:.2f}%" for i, prob in enumerate(predictions[0])}
+            
+            return {
+                "predicted_class": classes[int(predicted_class)],
+                "class_probabilities": probabilities
+            }
+        except Exception as e:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST, 
+                detail="Ocorreu um erro ao realizar a predição da image. Causa: {e}",
+            )
     
 
     def get_classes(self) -> list[str]:
@@ -306,6 +356,32 @@ class Managermodel:
         # Remove o arquivo zip temporário
         os.remove(temp_zip_path)
         return classes, numberOfImages
+    
+    def __save_images(self, file_training_images, prefix_path: str):
+        saved_files = []  # Lista para armazenar os caminhos dos arquivos salvos
+
+        BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+        UPLOAD_DIR = os.path.join(BASE_DIR, f"../ui/statics/images/training_files/{prefix_path}")
+        shutil.rmtree(UPLOAD_DIR)
+        os.makedirs(UPLOAD_DIR, exist_ok=True)
+        
+        for image in file_training_images:
+            # Extrai o nome da classe e o nome da imagem
+            class_name, image_name = os.path.split(image.filename)
+
+            # Cria o subdiretório da classe (se não existir)
+            class_dir = os.path.join(UPLOAD_DIR, class_name)
+            os.makedirs(class_dir, exist_ok=True)
+
+            # Caminho completo onde o arquivo será salvo
+            file_path = os.path.join(class_dir, image_name)
+
+            # Salva o conteúdo do arquivo de forma síncrona
+            with open(file_path, "wb") as f:
+                f.write(image.file.read())  # Ler e salvar o arquivo
+
+            # Adiciona o caminho do arquivo salvo à lista
+            saved_files.append(file_path)
     
     def __copy_directory(self, source, destination):
         """

@@ -15,15 +15,6 @@ class SaveFiles():
     
     def __init__(self): pass
     
-    def save_model(self, model):
-        try:    
-            print('Salvando Modelo')
-            os.makedirs(os.path.dirname(self.MODEL_NAME_RESULT), exist_ok=True)
-            model.save(self.MODEL_NAME_RESULT)
-        except Exception as e:
-            print(f'Erro inesperado: {e}')
-            raise Exception('Erro inesperado ao salvar modelo')
-    
     def save_classes(self, classes: list[str]) -> None:
         try:
             print('Salvando clases coletadas')
@@ -87,9 +78,9 @@ class SaveFiles():
             plt.subplot(2,1,1)
             plt.plot(epochs_x, loss_values, 'bo', label='Training loss')
             plt.plot(epochs_x, val_loss_values, 'b', label='Validation loss')
-            plt.title('Training and validation Loss and Accuracy')
-            plt.xlabel('Epochs')
-            plt.ylabel('Loss')
+            plt.title('Gráfico de perda e Acurácia')
+            plt.xlabel('Épocas')
+            plt.ylabel('Perda')
             plt.legend()
             plt.subplot(2,1,2)
             acc_values = history_dict['accuracy']
@@ -97,11 +88,11 @@ class SaveFiles():
             plt.plot(epochs_x, acc_values, 'bo', label='Training acc')
             plt.plot(epochs_x, val_acc_values, 'b', label='Validation acc')
             #plt.title('Training and validation accuracy')
-            plt.xlabel('Epochs')
-            plt.ylabel('Acc')
+            plt.xlabel('Épocas')
+            plt.ylabel('Acurácia')
             plt.legend()
             os.makedirs(os.path.dirname(self.directory_to_save_image), exist_ok=True)
-            plt.savefig(f'{self.directory_to_save_image}Training and validation Loss and Accuracy.png')
+            plt.savefig(f'{self.directory_to_save_image}Training and validation Loss and Accuracy.png', dpi=300, bbox_inches='tight')
             print('Informações de validações do modelo salvas com sucesso')
             return True
         except Exception as e:
@@ -116,7 +107,7 @@ class SaveFiles():
         y_pred, 
         classes, 
         normalize=True, 
-        title='Confusion matrix', 
+        title='Matriz de Confusão', 
         cmap=plt.cm.Blues
     ) -> bool:
         """
@@ -142,11 +133,12 @@ class SaveFiles():
                 plt.text(j, i, cm[i, j],
                         horizontalalignment="center",
                         color="white" if cm[i, j] > thresh else "black")
-            plt.tight_layout()
-            plt.ylabel('True label')
-            plt.xlabel('Predicted label')
+            
+            plt.tight_layout(pad=2.0)  # Define um padding adicional para evitar cortes
+            plt.ylabel('Classe Verdadeira', fontsize=12)  # Aumenta o tamanho da fonte para visibilidade
+            plt.xlabel('Classe Prevista', fontsize=12)
             os.makedirs(os.path.dirname(self.directory_to_save_image), exist_ok=True)
-            plt.savefig(f'{self.directory_to_save_image}confusion_matrix.png')
+            plt.savefig(f'{self.directory_to_save_image}confusion_matrix.png', dpi=300, bbox_inches='tight')
             print('Matriz confusão salva com sucesso')
             return cm.ravel()
         except Exception as e:

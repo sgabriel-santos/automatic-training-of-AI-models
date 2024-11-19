@@ -30,4 +30,16 @@
   </form>
 </div>
 <link rel="stylesheet" href="{{ url_for('static', path='styles/result_model.css') }}">
+<script>
+  const verifyStep = async () => {
+    response = await sendRequestToAPI("/step", "GET")
+    const step = await response.json()
+
+    if(step != 4) window.location.href = '/'
+  }
+  
+  document.addEventListener('DOMContentLoaded', async () => {
+    await verifyStep()
+  })
+</script>
 {% endblock %}

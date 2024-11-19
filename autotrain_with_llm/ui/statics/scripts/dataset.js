@@ -58,6 +58,9 @@ const configDataset = async () => {
         let firstImage = trainingDataset[category][0]
         const newDiv = document.createElement('div')
         newDiv.classList.add('training')
+        console.log('Training -> ', `${url.train._url}${firstImage}`)
+        console.log(url.train._url)
+        console.log(firstImage)
         newDiv.innerHTML = imageCatogoryTemplate(category, `${url.train._url}${firstImage}`, amountImages)
         document.querySelector('.training-dataset').appendChild(newDiv)
     })
@@ -68,6 +71,9 @@ const configDataset = async () => {
 
         const newDiv = document.createElement('div')
         newDiv.classList.add('validation')
+        console.log('Valid -> ', `${url.valid._url}${firstImage}`)
+        console.log(url.valid._url)
+        console.log(firstImage)
         newDiv.innerHTML = imageCatogoryTemplate(category, `${url.valid._url}${firstImage}`, amountImages)
         document.querySelector('.validation-dataset').appendChild(newDiv)
     })

@@ -28,7 +28,10 @@ const verifyStep = async () => {
     const step = await response.json()
 
     if(step == -1){
-        alert('O modeo apresentou uma falha durante o treinamento')
+        alert('O modelo apresentou uma falha durante o treinamento')
+        // Parando fluxo do log
+        if(interval) clearInterval(interval)
+        
         document.querySelector('.go-to-result-model-step').style.display = 'none'
         document.querySelector('.go-to-config-step').style.display = 'block'
     }
@@ -45,7 +48,7 @@ const verifyStep = async () => {
 
     if(step == 3){
         // Recarregar os logs a cada 2 segundos
-        interval = setInterval(() => loadLogs(), 2000);
+        if(!interval) interval = setInterval(() => loadLogs(), 2000);
     }
 
     if(step == 4){ 
