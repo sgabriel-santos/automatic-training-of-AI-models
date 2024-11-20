@@ -79,6 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     img.classList.add('imported-img')
                     img.id = "cover"
                     img.src = URL.createObjectURL(input.files[0])
+                    testFunction(img.src)
 
                     drop.appendChild(img)
                 }

@@ -115,6 +115,10 @@ const clearInput = () => {
     drop.removeChild(drop.querySelector('img.imported-img'))
 }
 
+let last_image_src = ''
+
+const testFunction = (src) => last_image_src = src
+
 // Função para converter porcentagem para largura
 const percentageToWidth = (percentage) => parseFloat(percentage.replace('%', ''));
 
@@ -128,6 +132,23 @@ const buildResponse = (data) => {
     compatibility.textContent = 'Compatibilidade'
 
     barsContainer.appendChild(compatibility)
+
+    const predictResult = document.createElement('div')
+    predictResult.id = 'predict-result'
+
+    barsContainer.appendChild(predictResult)
+
+    const imageContainer = document.createElement('img')
+    imageContainer.src = last_image_src
+    imageContainer.id = "image-predicted"
+    predictResult.appendChild(imageContainer)
+
+    const categories = document.createElement('div')
+    categories.id = 'catogories'
+
+    predictResult.appendChild(categories)
+    
+
 
     // Montar o layout dinamicamente
     Object.entries(data.class_probabilities).forEach(([className, probability]) => {
@@ -164,7 +185,7 @@ const buildResponse = (data) => {
         barContainer.appendChild(percentage);
 
         // Adicionar ao contêiner principal
-        barsContainer.appendChild(barContainer);
+        categories.appendChild(barContainer);
     });
 }
 

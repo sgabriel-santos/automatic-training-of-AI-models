@@ -16,7 +16,7 @@
   .test-result-container {
     display: flex;
     gap: 30px;
-    flex-wrap: wrap;
+    /* flex-wrap: wrap; */
   }
 
   .btns {
@@ -61,9 +61,11 @@
 
   .bar-container {
     display: flex;
-    align-items: center;
+    /* align-items: center; */
     margin-bottom: 10px;
     gap: 10px;
+    width: 100%;
+    align-items: center;
   }
 
   .label {
@@ -148,4 +150,18 @@ dialog p {
 
 .button.continue:hover {
     background-color: #d62828;
+}
+
+#image-predicted {
+  height: 150px;
+}
+
+div#predict-result {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+div#catogories {
+  flex-grow: 1;
 }
