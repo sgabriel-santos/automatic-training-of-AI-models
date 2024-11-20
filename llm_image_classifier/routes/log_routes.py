@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, status
 from starlette.responses import RedirectResponse, HTMLResponse, StreamingResponse
 from io import StringIO
 from fastapi.templating import Jinja2Templates
-from autotrain_with_llm.middleware import utils_log
+from llm_image_classifier.middleware import utils_log
 import sys
 import os
 

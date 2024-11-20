@@ -1,8 +1,8 @@
 from fastapi import status, BackgroundTasks, UploadFile, File, HTTPException, status, Form, APIRouter
 from starlette.responses import RedirectResponse, HTMLResponse, FileResponse
 from fastapi.responses import JSONResponse
-from autotrain_with_llm.models.manager_model import Managermodel
-from autotrain_with_llm.middleware import utils_log, utils_llm
+from llm_image_classifier.models.manager_model import Managermodel
+from llm_image_classifier.middleware import utils_log, utils_llm
 from typing import Optional
 import sys
 import os

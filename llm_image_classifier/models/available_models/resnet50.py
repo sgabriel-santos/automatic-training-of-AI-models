@@ -1,7 +1,7 @@
 from tf_keras.applications import ResNet50
 from tf_keras.layers import Dense, GlobalAveragePooling2D, Dropout
 from tf_keras.models import Model
-from autotrain_with_llm.models.abstract_model_class import ImageClassification
+from llm_image_classifier.models.abstract_model_class import ImageClassification
 from tf_keras.callbacks import History
 
 class Resnet50Model(ImageClassification):

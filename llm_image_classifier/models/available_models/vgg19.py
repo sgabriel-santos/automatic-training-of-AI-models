@@ -1,7 +1,7 @@
 from tf_keras.applications.vgg19 import VGG19
 from tf_keras.layers import Dense, GlobalAveragePooling2D
 from tf_keras import layers, Input, applications, Sequential, Model
-from autotrain_with_llm.models.abstract_model_class import ImageClassification
+from llm_image_classifier.models.abstract_model_class import ImageClassification
 from tf_keras.callbacks import History
 
 class VGG19Model(ImageClassification):

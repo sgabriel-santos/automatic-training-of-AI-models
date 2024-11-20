@@ -2,12 +2,14 @@ venv
 __pycache__
 
 build
-autotrain_with_llm.egg-info
+llm_image_classifier.egg-info
 dist
 
-autotrain_with_llm/models/results
-autotrain_with_llm/ui/statics/images/*
-!autotrain_with_llm/ui/statics/images/home_image.png
-!autotrain_with_llm/ui/statics/images/source_code_icon.png
-!autotrain_with_llm/ui/statics/images/upload_file_icon.png
-autotrain_with_llm/llm/utils/*.txt
+.vscode/*
+
+llm_image_classifier/models/results
+llm_image_classifier/ui/statics/images/*
+!llm_image_classifier/ui/statics/images/home_image.png
+!llm_image_classifier/ui/statics/images/source_code_icon.png
+!llm_image_classifier/ui/statics/images/upload_file_icon.png
+llm_image_classifier/llm/utils/*.txt

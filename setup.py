@@ -7,8 +7,8 @@ here = pathlib.Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name="autotrain_with_llm",
-    version="0.4.0",
+    name="llm_image_classifier",
+    version="1.0.0",
     packages=find_packages(),
     install_requires=[
         "fastapi",
@@ -24,7 +24,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'autotrain_with_llm=main:app',  # Aponta para o FastAPI app no main.py
+            'llm_image_classifier=main:app',  # Aponta para o FastAPI app no main.py
         ],
     },
     author="Gabriel Batista",

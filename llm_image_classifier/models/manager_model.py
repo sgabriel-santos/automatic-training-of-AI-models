@@ -1,8 +1,8 @@
 from fastapi import HTTPException, status
-from autotrain_with_llm.models.models import name_to_model
-from autotrain_with_llm.models.abstract_model_class import ImageClassification
+from llm_image_classifier.models.models import name_to_model
+from llm_image_classifier.models.abstract_model_class import ImageClassification
 from fastapi import UploadFile
-from autotrain_with_llm.middleware.utils_os import exists_directory
+from llm_image_classifier.middleware.utils_os import exists_directory
 import shutil
 import zipfile
 import os

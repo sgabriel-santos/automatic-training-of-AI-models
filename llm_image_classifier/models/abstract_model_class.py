@@ -4,7 +4,7 @@ from sklearn.metrics import classification_report, precision_score, recall_score
 from tf_keras.callbacks import History
 from tf_keras.models import load_model, Model
 from tf_keras.preprocessing.image import ImageDataGenerator
-from autotrain_with_llm.models.save_files_class import SaveFiles
+from llm_image_classifier.models.save_files_class import SaveFiles
 import math
 import os
 

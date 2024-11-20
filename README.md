@@ -24,12 +24,12 @@ O único pré-requisito para rodar a ferramenta é ter o **Python 3.10 ou superi
 
 ## 🔧 **Instalação**
 
-Você pode instalar a ferramenta de duas formas: através do pacote `autotrain_with_llm` ou clonando este repositório.
+Você pode instalar a ferramenta de duas formas: através do pacote `llm_image_classifier` ou clonando este repositório.
 
 ### 1️⃣ Instalando como um pacote Python:
 Use o comando abaixo para instalar o pacote diretamente:
 ```bash
-pip install autotrain_with_llm
+pip install llm_image_classifier
 ```
 
 ### 2️⃣ Clonando Repositório:
@@ -42,7 +42,7 @@ cd automatic-training-of-AI-models
 ### ▶️ Como Executar
 Após instalar o pacote ou clonar o repositório, basta executar o seguinte comando para iniciar a aplicação:
 ```bash
-uvicorn autotrain_with_llm.main:app
+uvicorn llm_image_classifier.main:app
 ```
 Assim que o servidor for iniciado, acesse a aplicação no navegador pelo link: http://localhost:8000/
 

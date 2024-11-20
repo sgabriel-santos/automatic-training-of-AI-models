@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, status
 from fastapi.templating import Jinja2Templates
-from autotrain_with_llm.models.manager_model import Managermodel
-from autotrain_with_llm.models.save_files_class import SaveFiles
+from llm_image_classifier.models.manager_model import Managermodel
+from llm_image_classifier.models.save_files_class import SaveFiles
 import inspect
 import os
 

@@ -1,9 +1,9 @@
 from fastapi import FastAPI
-from autotrain_with_llm.routes import log_routes, screen_routes, utils_routes, llm_routes, training_model_routes
-from autotrain_with_llm.middleware.utils_os import remove_file
+from llm_image_classifier.routes import log_routes, screen_routes, utils_routes, llm_routes, training_model_routes
+from llm_image_classifier.middleware.utils_os import remove_file
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from autotrain_with_llm.middleware.utils_llm import generate_text_model_to_llm_in_file
+from llm_image_classifier.middleware.utils_llm import generate_text_model_to_llm_in_file
 from contextlib import asynccontextmanager
 import os
 

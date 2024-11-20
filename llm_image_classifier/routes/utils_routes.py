@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Request
-from autotrain_with_llm.models.manager_model import Managermodel
-from autotrain_with_llm.models.models import name_to_model
+from llm_image_classifier.models.manager_model import Managermodel
+from llm_image_classifier.models.models import name_to_model
 from fastapi import HTTPException, status
 from typing import Dict, List
 import inspect

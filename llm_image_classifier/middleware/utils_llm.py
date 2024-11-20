@@ -1,5 +1,5 @@
 from fastapi import HTTPException, status
-from autotrain_with_llm.models.manager_model import Managermodel
+from llm_image_classifier.models.manager_model import Managermodel
 from logging import error
 from groq import Groq
 import textwrap
