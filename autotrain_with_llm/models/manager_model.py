@@ -337,7 +337,12 @@ class Managermodel:
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         # Remove o diretório e todo o seu conteúdo
         extract_dir = os.path.join(BASE_DIR, f"../ui/statics/images/training_files/{prefix_path}")
-        shutil.rmtree(extract_dir)
+        
+        # Verifica se o diretório de destino já existe
+        if os.path.exists(extract_dir):
+            print(f"Diretório de destino '{extract_dir}' já existe. Removendo...")
+            shutil.rmtree(extract_dir)  # Remove o diretório destino, se já existir
+        
         os.makedirs(extract_dir, exist_ok=True)
 
         # Descompacta o arquivo zip
@@ -362,7 +367,12 @@ class Managermodel:
 
         BASE_DIR = os.path.dirname(os.path.abspath(__file__))
         UPLOAD_DIR = os.path.join(BASE_DIR, f"../ui/statics/images/training_files/{prefix_path}")
-        shutil.rmtree(UPLOAD_DIR)
+        
+        # Verifica se o diretório já existe
+        if os.path.exists(UPLOAD_DIR):
+            print(f"Diretório '{UPLOAD_DIR}' já existe. Removendo...")
+            shutil.rmtree(UPLOAD_DIR)  # Remove o diretório destino, se já existir
+            
         os.makedirs(UPLOAD_DIR, exist_ok=True)
         
         for image in file_training_images:
